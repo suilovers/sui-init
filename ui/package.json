@@ -1,0 +1,14 @@
+{
+    "name": "sui-launcher",
+    "version": "1.0.0",
+    "description": "SUi launcher for developers",
+    "main": "index.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "electron": "^29.3.0"
+    }
+}
