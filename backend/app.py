@@ -3,25 +3,25 @@ from flask import Blueprint, Flask, request, jsonify
 import subprocess
 import json
 
+from utils import sui_command
+
 app = Flask(__name__)
 api_blueprint = Blueprint('api', __name__)
 
 @api_blueprint.route('/version', methods=['GET'])
 def version():
-    version = subprocess.check_output(['sui', '--version'])
-    return jsonify({'version': version.strip()})
+    version = sui_command([ '--version'],False,"version")
+    return version
 
 @api_blueprint.route('/envs', methods=['GET'])
 def envs():
-    response = json.loads(subprocess.check_output(['sui', 'client', 'envs', '--json']))
-    # regex = r'\│\s*([^\s]+)\s*\│\s*(https?:\/\/[^\s\│]+)\s*\│'
-    # envs = [{'name': m.group(1), 'url': m.group(2)} for m in re.finditer(regex, envs)]
-    return jsonify({'active_env': response[1]})
+    response = sui_command(['client', 'envs'])
+    return {'active_env': response[1], 'all_envs': response[0]}
 
 @api_blueprint.route('/address', methods=['GET'])
 def address():
-    response = subprocess.check_output(['sui', 'client', 'addresses', '--json'])
-    return json.loads(response)
+    response = sui_command(['client', 'address'])
+    return response
 
 app.register_blueprint(api_blueprint, url_prefix='/api')
 
