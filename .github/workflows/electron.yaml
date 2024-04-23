@@ -24,6 +24,11 @@ jobs:
       # install dependencies
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
+        working-directory: ui
+        run: 
+          yarn install
+          yarn build
+          yarn electron-builder --publish=always
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
