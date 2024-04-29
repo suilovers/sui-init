@@ -1,0 +1,13 @@
+# cache
+**/__pycache__/
+**/*.pyc
+
+# virtualenv
+venv/
+
+# macos
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/Icon
+**/._*
