@@ -1,4 +1,18 @@
-import { createRoot } from 'react-dom/client';
-const root = createRoot(document.body);
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Router } from './routes';
 
-root.render(<h2>Hello from React !</h2>);
+const darkTheme = createTheme({
+    palette: {
+        mode: 'dark'
+    }
+});
+
+export default function App() {
+    return (
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <Router />
+        </ThemeProvider>
+    );
+}
