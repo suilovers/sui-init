@@ -1,0 +1,36 @@
+name: Build/release
+
+on: 
+  push:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+      # Check out the repository
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+      # Install docker
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+          sudo apt-get update
+          sudo apt-get install docker-ce
+      # Build the Docker image
+      - name: Build Docker image
+        run: docker build -t sui . -f Dockerfile --no-cache --progress=plain
+      # Run the Docker image and wait until see the message "Server is running"
+      - name: Run Docker image
+        run: | 
+          docker run -d -p 8080:8080 sui
+          echo "Check flask server is running"
+          until docker logs $(docker ps -lq) | grep -q "Flask app and React app are now running in the background."; do sleep 1; done
+          echo "Check react app is running"
+          until docker logs $(docker ps -lq) | grep -q "No issues found"; do sleep 1; done
