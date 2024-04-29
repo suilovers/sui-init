@@ -40,6 +40,6 @@ EXPOSE  5000
 EXPOSE 3000
 # ADD init.sh
 WORKDIR /app
-COPY init.sh /app/init.sh
-RUN chmod +x /app/init.sh
+COPY init.sh init.sh
+RUN chmod +x init.sh
 CMD ["./init.sh"]
