@@ -5,9 +5,9 @@ This is a simple SUI Interface for web developers. It empowers SUI functionaliti
 
 ### Development
 You can run Dockerfile to run the project. It will create a container with the project requirements:
-    - Node
-    - Flask
-    - SUI
+- Node
+- Flask
+- SUI
 
 ### How to Run ? 
 
