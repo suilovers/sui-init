@@ -1,22 +1,45 @@
-FROM ubuntu:20.04
+# ubuntu:22.04
+FROM homebrew/brew:4.2.20
 
-RUN groupadd --gid 1000 builduser \
-    && useradd --uid 1000 --gid builduser --shell /bin/bash --create-home builduser \
-    && mkdir -p /setup
+USER root
 
-# Set up TEMP directory
-ENV TEMP=/tmp
-RUN chmod a+rwx /tmp
+# install sudo
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Linux packages
-ADD tools/install-deps.sh /tmp/
-RUN bash /tmp/install-deps.sh --32bit
+USER linuxbrew
 
-# Add xvfb init script
-ADD tools/xvfb-init.sh /etc/init.d/xvfb
-RUN chmod a+x /etc/init.d/xvfb
+RUN brew --version
+RUN brew install node
+RUN brew install yarn
+RUN brew install sui
 
-RUN rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 
-USER builduser
-WORKDIR /home/builduser
+RUN python3 --version
+
+ENV backend_path=/app/backend
+ENV ui_path=/app/ui
+
+# copy backend and ui folders
+COPY backend /app/backend
+COPY ui /app/ui
+
+# Install backend dependencies
+RUN python3 -m venv /app/venv
+RUN . /app/venv/bin/activate
+RUN /app/venv/bin/pip3 install -r ${backend_path}/requirements.txt
+
+USER root
+# Install ui dependencies
+WORKDIR ${ui_path}
+RUN yarn
+
+EXPOSE  5000
+EXPOSE 3000
+# ADD init.sh
+WORKDIR /app
+COPY init.sh /app/init.sh
+RUN chmod +x /app/init.sh
+CMD ["./init.sh"]

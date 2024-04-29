@@ -1,0 +1,20 @@
+.github
+**/README.md
+**/LICENSE
+**/.gitignore
+**/node_modules
+**/dist
+**/build
+**/coverage
+**/docs
+**/test
+**/tests
+**/spec
+**/example
+
+# mac folders and files
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/Icon
+**/._*

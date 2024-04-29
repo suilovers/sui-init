@@ -1,22 +1,16 @@
-FROM ubuntu:20.04
+# mac folders and files
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/Icon
+**/._*
+**/.Spotlight-V100
+**/.Trashes
+**/ehthumbs.db
+**/Thumbs.db
 
-RUN groupadd --gid 1000 builduser \
-  && useradd --uid 1000 --gid builduser --shell /bin/bash --create-home builduser \
-  && mkdir -p /setup
 
-# Set up TEMP directory
-ENV TEMP=/tmp
-RUN chmod a+rwx /tmp
+# node_modules
+**/node_modules
+**/node_modules/**/*
 
-# Install Linux packages
-ADD tools/install-deps.sh /tmp/
-RUN bash /tmp/install-deps.sh --32bit
-
-# Add xvfb init script
-ADD tools/xvfb-init.sh /etc/init.d/xvfb
-RUN chmod a+x /etc/init.d/xvfb
-
-RUN rm -rf /var/lib/apt/lists/*
-
-USER builduser
-WORKDIR /home/builduser
