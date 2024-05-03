@@ -14,3 +14,7 @@
 **/node_modules
 **/node_modules/**/*
 
+# pyenv
+**/sui-env
+**/__pycache__
+
