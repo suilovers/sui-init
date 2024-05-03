@@ -29,4 +29,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: abodur/sui-init:latest
+          tags: abodur/sui-init:${{ github.sha }}, abodur/sui-init:latest
