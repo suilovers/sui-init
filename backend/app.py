@@ -722,10 +722,226 @@ def client_private():
 
 
 #### KEYTOOL ENDPOINTS ####
-@api_blueprint.route("/keytools/convert", methods=["POST"])
+
+
+@api_blueprint.route("/keytool/update-alias", methods=["POST"])
+def keytool_update_alias():
+    data = KeytoolUpdateAliasDTO(**request.json)
+    command = ["keytool", "update-alias", data.old_alias]
+    if data.new_alias:
+        command.append(data.new_alias)
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/convert", methods=["POST"])
 def keytool_convert():
     data = KeytoolConvertDTO(**request.json)
     command = ["keytool", "convert", data.value]
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/decode-or-verify-tx", methods=["POST"])
+def keytool_decode_or_verify_tx():
+    data = KeytoolDecodeOrVerifyTxDTO(**request.json)
+    command = ["keytool", "decode-or-verify-tx", "--tx-bytes", data.tx_bytes]
+    if data.sig:
+        command.extend(["--sig", data.sig])
+    if data.cur_epoch:
+        command.extend(["--cur-epoch", str(data.cur_epoch)])
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/decode-multi-sig", methods=["POST"])
+def keytool_decode_multi_sig():
+    data = KeytoolDecodeMultiSigDTO(**request.json)
+    command = ["keytool", "decode-multi-sig", "--multisig", data.multisig]
+    if data.tx_bytes:
+        command.extend(["--tx-bytes", data.tx_bytes])
+    if data.cur_epoch:
+        command.extend(["--cur-epoch", str(data.cur_epoch)])
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/generate", methods=["POST"])
+def keytool_generate():
+    data = KeytoolGenerateDTO(**request.json)
+    command = ["keytool", "generate", data.key_scheme]
+    if data.derivation_path:
+        command.append(data.derivation_path)
+    if data.word_length:
+        command.append(data.word_length)
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/import", methods=["POST"])
+def keytool_import():
+    data = KeytoolImportDTO(**request.json)
+    command = ["keytool", "import", data.input_string, data.key_scheme]
+    if data.derivation_path:
+        command.append(data.derivation_path)
+    if data.alias:
+        command.extend(["--alias", data.alias])
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/export", methods=["POST"])
+def keytool_export():
+    data = KeytoolExportDTO(**request.json)
+    command = ["keytool", "export", "--key-identity", data.key_identity]
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/list", methods=["POST"])
+def keytool_list():
+    data = KeytoolListDTO(**request.json)
+    command = ["keytool", "list"]
+    if data.sort_by_alias:
+        command.append("--sort-by-alias")
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/load-keypair", methods=["POST"])
+def keytool_load_keypair():
+    data = KeytoolLoadKeypairDTO(**request.json)
+    command = ["keytool", "load-keypair", data.file]
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/multi-sig-address", methods=["POST"])
+def keytool_multi_sig_address():
+    data = KeytoolMultiSigAddressDTO(**request.json)
+    command = [
+        "keytool",
+        "multi-sig-address",
+        "--threshold",
+        str(data.threshold),
+        "--pks",
+    ] + data.pks
+    if data.weights:
+        command.extend(["--weights"] + list(map(str, data.weights)))
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/multi-sig-combine-partial-sig", methods=["POST"])
+def keytool_multi_sig_combine_partial_sig():
+    data = KeytoolMultiSigCombinePartialSigDTO(**request.json)
+    command = (
+        [
+            "keytool",
+            "multi-sig-combine-partial-sig",
+            "--threshold",
+            str(data.threshold),
+            "--sigs",
+        ]
+        + data.sigs
+        + ["--pks"]
+        + data.pks
+    )
+    if data.weights:
+        command.extend(["--weights"] + list(map(str, data.weights)))
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/show", methods=["POST"])
+def keytool_show():
+    data = KeytoolShowDTO(**request.json)
+    command = ["keytool", "show", data.file]
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/sign", methods=["POST"])
+def keytool_sign():
+    data = KeytoolSignDTO(**request.json)
+    command = ["keytool", "sign", "--address", data.address, "--data", data.data]
+    if data.intent:
+        command.extend(["--intent", data.intent])
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/sign-kms", methods=["POST"])
+def keytool_sign_kms():
+    data = KeytoolSignKmsDTO(**request.json)
+    command = [
+        "keytool",
+        "sign-kms",
+        "--data",
+        data.data,
+        "--keyid",
+        data.keyid,
+        "--base64pk",
+        data.base64pk,
+    ]
+    if data.intent:
+        command.extend(["--intent", data.intent])
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/unpack", methods=["POST"])
+def keytool_unpack():
+    data = KeytoolUnpackDTO(**request.json)
+    command = ["keytool", "unpack", data.keypair]
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/zk-login-sign-and-execute-tx", methods=["POST"])
+def keytool_zk_login_sign_and_execute_tx():
+    data = KeytoolZkLoginSignAndExecuteTxDTO(**request.json)
+    command = [
+        "keytool",
+        "zk-login-sign-and-execute-tx",
+        "--max-epoch",
+        str(data.max_epoch),
+        "--network",
+        data.network,
+    ]
+    if data.fixed:
+        command.append("--fixed")
+    if data.test_multisig:
+        command.append("--test-multisig")
+    if data.sign_with_sk:
+        command.append("--sign-with-sk")
+    response = sui_command(command)
+    return response
+
+
+@api_blueprint.route("/keytool/zk-login-enter-token", methods=["POST"])
+def keytool_zk_login_enter_token():
+    data = KeytoolZkLoginEnterTokenDTO(**request.json)
+    command = [
+        "keytool",
+        "zk-login-enter-token",
+        "--parsed-token",
+        data.parsed_token,
+        "--max-epoch",
+        str(data.max_epoch),
+        "--jwt-randomness",
+        data.jwt_randomness,
+        "--kp-bigint",
+        data.kp_bigint,
+        "--ephemeral-key-identifier",
+        data.ephemeral_key_identifier,
+        "--network",
+        data.network,
+    ]
+    if data.test_multisig:
+        command.append("--test-multisig")
+    if data.sign_with_sk:
+        command.append("--sign-with-sk")
     response = sui_command(command)
     return response
 
