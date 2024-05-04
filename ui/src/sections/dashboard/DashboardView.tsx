@@ -1,10 +1,10 @@
 import { Card, CardContent, Grid } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import DashboardItem from './DashboardItem';
 
 const useStyles = makeStyles({
     card: {
-        width: '60%',
-        height: '60%'
+        width: '60%'
     }
 });
 const items = [
@@ -82,11 +82,7 @@ export default function DashboardView() {
                 <Grid container spacing={3}>
                     {items.map((box, index) => (
                         <Grid item xs={3} key={index}>
-                            <Card>
-                                <CardContent>
-                                    <h3>{box.name}</h3>
-                                </CardContent>
-                            </Card>
+                            <DashboardItem name={box.name} description={box.description} />
                         </Grid>
                     ))}
                 </Grid>

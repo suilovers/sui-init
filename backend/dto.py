@@ -13,10 +13,6 @@ class ClientBalanceDTO(BaseModel):
     with_coins: bool = False
 
 
-class KeytoolConvertDTO(BaseModel):
-    value: str
-
-
 class ClientCallDTO(BaseModel):
     package: str
     module: str
@@ -305,7 +301,7 @@ class ClientReplayCheckpointDTO(BaseModel):
 
 class KeytoolUpdateAliasDTO(BaseModel):
     old_alias: str
-    new_alias: Optional[str] = None
+    new_alias: str = None
 
 class KeytoolConvertDTO(BaseModel):
     value: str
@@ -313,73 +309,32 @@ class KeytoolConvertDTO(BaseModel):
 
 class KeytoolDecodeOrVerifyTxDTO(BaseModel):
     tx_bytes: str
-    sig: Optional[str] = None
-    cur_epoch: Optional[int] = 0
+    sig: str = None
+    cur_epoch: int = 0
+
+
+class KeytoolDecodeMultiSigDTO(BaseModel):
+    multisig: str
+    tx_bytes: str = None
+    cur_epoch: int = 0
+
+
+class KeytoolGenerateDTO(BaseModel):
+    key_scheme: str
+    derivation_path: str = None
+    word_length: str = None
 
 
 class KeytoolImportDTO(BaseModel):
     input_string: str
     key_scheme: str
-    derivation_path: Optional[str] = None
-    alias: Optional[str] = None
+    derivation_path: str = None
+    alias: str = None
+
 
 class KeytoolExportDTO(BaseModel):
     key_identity: str
 
-class KeytoolListDTO(BaseModel):
-    sort_by_alias: Optional[bool] = False
 
 class KeytoolLoadKeypairDTO(BaseModel):
     file: str
-
-class KeytoolMultiSigAddressDTO(BaseModel):
-    threshold: int
-    pks: List[str]
-    weights: Optional[List[int]] = None
-
-
-class KeytoolMultiSigCombinePartialSigDTO(BaseModel):
-    sigs: List[str]
-    pks: List[str]
-    threshold: int
-    weights: Optional[List[int]] = None
-
-
-class KeytoolShowDTO(BaseModel):
-    file: str
-
-
-class KeytoolSignDTO(BaseModel):
-    address: str
-    data: str
-    intent: Optional[str] = None
-
-
-class KeytoolSignKmsDTO(BaseModel):
-    data: str
-    keyid: str
-    base64pk: str
-    intent: Optional[str] = None
-
-
-class KeytoolUnpackDTO(BaseModel):
-    keypair: str
-
-
-class KeytoolZkLoginSignAndExecuteTxDTO(BaseModel):
-    max_epoch: int
-    network: Optional[str] = "devnet"
-    fixed: Optional[bool] = False
-    test_multisig: Optional[bool] = False
-    sign_with_sk: Optional[bool] = False
-
-
-class KeytoolZkLoginEnterTokenDTO(BaseModel):
-    parsed_token: str
-    max_epoch: int
-    jwt_randomness: str
-    kp_bigint: str
-    ephemeral_key_identifier: str
-    network: Optional[str] = "devnet"
-    test_multisig: Optional[bool] = False
-    sign_with_sk: Optional[bool] = False
