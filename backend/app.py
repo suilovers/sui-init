@@ -949,4 +949,4 @@ def keytool_zk_login_enter_token():
 app.register_blueprint(api_blueprint, url_prefix="/api")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

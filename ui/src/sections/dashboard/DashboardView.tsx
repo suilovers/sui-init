@@ -1,46 +1,96 @@
-import { Button, Grid, Stack } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import { styled } from "@mui/material/styles";
-import "./styles/DashboardView.css";
+import { Card, CardContent, Grid } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+const useStyles = makeStyles({
+    card: {
+        width: '60%',
+        height: '60%'
+    }
+});
+const items = [
+    {
+        name: 'Pay',
+        description: 'Pay for the service'
+    },
+    {
+        name: 'Sui Version',
+        description: 'The version of the Sui'
+    },
+    {
+        name: 'Adress',
+        description: 'The adress of the service'
+    },
+    {
+        name: 'Envs',
+        description: 'The envs of the service'
+    },
+    {
+        name: 'Logs',
+        description: 'The logs of the service'
+    },
+    {
+        name: 'Metrics',
+        description: 'The metrics of the service'
+    },
+    {
+        name: 'Settings',
+        description: 'The settings of the service'
+    },
+    {
+        name: 'Users',
+        description: 'The users of the service'
+    },
+    {
+        name: 'Pay',
+        description: 'Pay for the service'
+    },
+    {
+        name: 'Sui Version',
+        description: 'The version of the Sui'
+    },
+    {
+        name: 'Adress',
+        description: 'The adress of the service'
+    },
+    {
+        name: 'Envs',
+        description: 'The envs of the service'
+    },
+    {
+        name: 'Logs',
+        description: 'The logs of the service'
+    },
+    {
+        name: 'Metrics',
+        description: 'The metrics of the service'
+    },
+    {
+        name: 'Settings',
+        description: 'The settings of the service'
+    },
+    {
+        name: 'Users',
+        description: 'The users of the service'
+    }
+];
 
 export default function DashboardView() {
-  return (
-    <Grid
-      container
-      spacing={2}
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      style={{ minHeight: "100vh" }} // This makes the Grid container take up the full height of the viewport
-    >
-      <Grid item xs={8}>
-        <Stack direction="column" spacing={2}>
-          <Button variant="contained">Pay</Button>
-        </Stack>
-      </Grid>
-      <Grid item xs={4}>
-        <Stack direction="column" spacing={2}>
-          <Button variant="contained">Sui Version</Button>
-        </Stack>
-      </Grid>
-      <Grid item xs={4}>
-        <Stack direction="column" spacing={2}>
-          <Button variant="contained">adress</Button>
-        </Stack>
-      </Grid>
-      <Grid item xs={8}>
-        <Stack direction="column" spacing={2}>
-          <Button variant="contained">envs</Button>
-        </Stack>
-      </Grid>
-    </Grid>
-  );
+    const classes = useStyles();
+    return (
+        <Card className={classes.card}>
+            <CardContent>
+                <Grid container spacing={3}>
+                    {items.map((box, index) => (
+                        <Grid item xs={3} key={index}>
+                            <Card>
+                                <CardContent>
+                                    <h3>{box.name}</h3>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </CardContent>
+        </Card>
+    );
 }

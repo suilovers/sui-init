@@ -7,7 +7,7 @@ python3 -m venv /app/venv
 . /app/venv/bin/activate
 export FLASK_APP=app.py
 export FLASK_ENV=development
-flask run -p 8080 &
+flask run -p 8080 --host 0.0.0.0 &
 
 # Optional: Add a delay to ensure that the Flask app starts before the React app
 sleep 5
