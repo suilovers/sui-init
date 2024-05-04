@@ -122,7 +122,7 @@ class ClientObjectsDTO(BaseModel):
 
 class ClientPublishDTO(BaseModel):
     package_path: Optional[str] = "."
-    dev: Optional[bool] = False
+    dev: Optional[bool]
     test: Optional[bool] = False
     doc: Optional[bool] = False
     install_dir: Optional[str] = None

@@ -44,10 +44,12 @@ from dto import (
 from utils import sui_command, cat_command
 
 app = Flask(__name__)
-api_blueprint = Blueprint("api", __name__)
+client_blueprint = Blueprint("client", __name__)
+keytool_blueprint = Blueprint("keytool", __name__)
+start_blueprint = Blueprint("start", __name__)
 
 
-@api_blueprint.route("/start", methods=["POST"])
+@start_blueprint.route("/", methods=["POST"])
 def start():
     """
     Starts the application with the provided configuration.
@@ -66,7 +68,7 @@ def start():
 
 
 ### CLIENT ENDPOINTS ###
-@api_blueprint.route("/client/active-address", methods=["GET"])
+@client_blueprint.route("/active-address", methods=["GET"])
 def client_active_address():
     """
     Retrieves the active address of the client.
@@ -79,19 +81,19 @@ def client_active_address():
     return {"active_address": response}
 
 
-@api_blueprint.route("/client/active-env", methods=["GET"])
+@client_blueprint.route("/active-env", methods=["GET"])
 def client_active_env():
     response = sui_command(["client", "active-env"])
     return {"active_env": response}
 
 
-@api_blueprint.route("/client/addresses", methods=["GET"])
+@client_blueprint.route("/addresses", methods=["GET"])
 def client_addresses():
     response = sui_command(["client", "addresses"])
     return response
 
 
-@api_blueprint.route("/client/balance", methods=["POST"])
+@client_blueprint.route("/balance", methods=["POST"])
 def client_balance():
     data = ClientBalanceDTO(**request.json)
     command = ["client", "balance", data.address]
@@ -99,11 +101,12 @@ def client_balance():
         command.extend(["--coin-type", data.coin_type])
     if data.with_coins:
         command.append("--with-coins")
+    print(command)
     response = sui_command(command)
     return response
 
 
-@api_blueprint.route("/client/call", methods=["POST"])
+@client_blueprint.route("/call", methods=["POST"])
 def client_call():
     data = ClientCallDTO(**request.json)
     command = [
@@ -118,9 +121,18 @@ def client_call():
         "--gas-budget",
         data.gas_budget,
     ]
+    
+    if data.package:
+        command.extend(["--package", data.package])
+    if data.module:
+        command.extend(["--module", data.module])
+    if data.function:
+        command.extend(["--function", data.function])
     if data.type_args:
         for arg in data.type_args:
             command.extend(["--type-args", arg])
+    if data.gas_budget:
+        command.extend(["--gas-budget", data.gas_budget])
     if data.args:
         for arg in data.args:
             command.extend(["--args", arg])
@@ -136,14 +148,14 @@ def client_call():
     return response
 
 
-@api_blueprint.route("/client/chain-identifier", methods=["GET"])
+@client_blueprint.route("/chain-identifier", methods=["GET"])
 def client_chain_identifier():
     command = ["client", "chain-identifier"]
     response = sui_command(command)
     return response
 
 
-@api_blueprint.route("/client/dynamic-field", methods=["POST"])
+@client_blueprint.route("/dynamic-field", methods=["POST"])
 def client_dynamic_field():
     data = ClientDynamicFieldDTO(**request.json)
     command = ["client", "dynamic-field", data.object_id]
@@ -155,7 +167,7 @@ def client_dynamic_field():
     return response
 
 
-@api_blueprint.route("/client/envs", methods=["GET"])
+@client_blueprint.route("/envs", methods=["GET"])
 def client_envs():
     try:
         command = ["client", "envs"]
@@ -165,7 +177,7 @@ def client_envs():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/execute-signed-tx", methods=["POST"])
+@client_blueprint.route("/execute-signed-tx", methods=["POST"])
 def client_execute_signed_tx():
     try:
         data = ClientExecuteSignedTxDTO(**request.json)
@@ -178,7 +190,7 @@ def client_execute_signed_tx():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/execute-combined-signed-tx", methods=["POST"])
+@client_blueprint.route("/execute-combined-signed-tx", methods=["POST"])
 def client_execute_combined_signed_tx():
     try:
         data = ClientExecuteCombinedSignedTxDTO(**request.json)
@@ -194,7 +206,7 @@ def client_execute_combined_signed_tx():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/faucet", methods=["GET"])
+@client_blueprint.route("/faucet", methods=["GET"])
 def client_faucet():
     try:
         data = ClientFaucetDTO(**request.args)
@@ -209,7 +221,7 @@ def client_faucet():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/gas", methods=["GET"])
+@client_blueprint.route("/gas", methods=["GET"])
 def client_gas():
     try:
         data = ClientGasDTO(**request.args)
@@ -222,7 +234,7 @@ def client_gas():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/merge-coin", methods=["POST"])
+@client_blueprint.route("/merge-coin", methods=["POST"])
 def client_merge_coin():
     try:
         data = ClientMergeCoinDTO(**request.json)
@@ -250,7 +262,7 @@ def client_merge_coin():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/new-address", methods=["POST"])
+@client_blueprint.route("/new-address", methods=["POST"])
 def client_new_address():
     try:
         data = ClientNewAddressDTO(**request.json)
@@ -267,7 +279,7 @@ def client_new_address():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/new-env", methods=["POST"])
+@client_blueprint.route("/new-env", methods=["POST"])
 def client_new_env():
     try:
         data = ClientNewEnvDTO(**request.json)
@@ -280,7 +292,7 @@ def client_new_env():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/object", methods=["GET"])
+@client_blueprint.route("/object", methods=["GET"])
 def client_object():
     try:
         data = ClientObjectDTO(**request.args)
@@ -293,7 +305,7 @@ def client_object():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/objects", methods=["GET"])
+@client_blueprint.route("/objects", methods=["GET"])
 def client_objects():
     try:
         data = ClientObjectsDTO(**request.args)
@@ -306,7 +318,7 @@ def client_objects():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/pay", methods=["POST"])
+@client_blueprint.route("/pay", methods=["POST"])
 def client_pay():
     try:
         data = ClientPayDTO(**request.json)
@@ -320,7 +332,7 @@ def client_pay():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/pay-all-sui", methods=["POST"])
+@client_blueprint.route("/pay-all-sui", methods=["POST"])
 def client_pay_all_sui():
     try:
         data = ClientPayAllSuiDTO(**request.json)
@@ -339,7 +351,7 @@ def client_pay_all_sui():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/pay-sui", methods=["POST"])
+@client_blueprint.route("/pay-sui", methods=["POST"])
 def client_pay_sui():
     try:
         data = ClientPaySuiDTO(**request.json)
@@ -353,7 +365,7 @@ def client_pay_sui():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/ptb", methods=["POST"])
+@client_blueprint.route("/ptb", methods=["POST"])
 def client_ptb():
     try:
         data = ClientPtbDTO(**request.json)
@@ -372,7 +384,7 @@ def client_ptb():
         return {"error": str(e)}, 400
 
 
-@api_blueprint.route("/client/publish", methods=["POST"])
+@client_blueprint.route("/publish", methods=["POST"])
 def client_publish():
     data = ClientPublishDTO(**request.json)
     command = ["client", "publish", "--gas-budget", data.gas_budget]
@@ -422,7 +434,7 @@ def client_publish():
     return response
 
 
-@api_blueprint.route("/client/split-coin", methods=["POST"])
+@client_blueprint.route("/split-coin", methods=["POST"])
 def client_split_coin():
     data = ClientSplitCoinDTO(**request.json)
     command = [
@@ -449,7 +461,7 @@ def client_split_coin():
     return response
 
 
-@api_blueprint.route("/client/switch", methods=["POST"])
+@client_blueprint.route("/switch", methods=["POST"])
 def client_switch():
     data = ClientSwitchDTO(**request.json)
     command = ["client", "switch"]
@@ -461,7 +473,7 @@ def client_switch():
     return response
 
 
-@api_blueprint.route("/client/tx-block", methods=["POST"])
+@client_blueprint.route("/tx-block", methods=["POST"])
 def client_tx_block():
     data = ClientTxBlockDTO(**request.json)
     command = ["client", "tx-block", data.digest]
@@ -469,7 +481,7 @@ def client_tx_block():
     return response
 
 
-@api_blueprint.route("/client/transfer", methods=["POST"])
+@client_blueprint.route("/transfer", methods=["POST"])
 def client_transfer():
     data = ClientTransferDTO(**request.json)
     command = [
@@ -494,7 +506,7 @@ def client_transfer():
     return response
 
 
-@api_blueprint.route("/client/transfer-sui", methods=["POST"])
+@client_blueprint.route("/transfer-sui", methods=["POST"])
 def client_transfer_sui():
     data = ClientTransferSuiDTO(**request.json)
     command = [
@@ -519,7 +531,7 @@ def client_transfer_sui():
     return response
 
 
-@api_blueprint.route("/client/upgrade", methods=["POST"])
+@client_blueprint.route("/upgrade", methods=["POST"])
 def client_upgrade():
     data = ClientUpgradeDTO(**request.json)
     command = [
@@ -576,7 +588,7 @@ def client_upgrade():
     return response
 
 
-@api_blueprint.route("/client/verify-bytecode-meter", methods=["POST"])
+@client_blueprint.route("/verify-bytecode-meter", methods=["POST"])
 def client_verify_bytecode_meter():
     data = ClientVerifyBytecodeMeterDTO(**request.json)
     command = ["client", "verify-bytecode-meter", "--package", data.package]
@@ -617,7 +629,7 @@ def client_verify_bytecode_meter():
     return response
 
 
-@api_blueprint.route("/client/verify-source", methods=["POST"])
+@client_blueprint.route("/verify-source", methods=["POST"])
 def client_verify_source():
     data = ClientVerifySourceDTO(**request.json)
     command = ["client", "verify-source", data.package_path]
@@ -659,7 +671,7 @@ def client_verify_source():
     return response
 
 
-@api_blueprint.route("/client/profile-transaction", methods=["POST"])
+@client_blueprint.route("/profile-transaction", methods=["POST"])
 def client_profile_transaction():
     data = ClientProfileTransactionDTO(**request.json)
     command = ["client", "profile-transaction", "--tx-digest", data.tx_digest]
@@ -671,7 +683,7 @@ def client_profile_transaction():
     return response
 
 
-@api_blueprint.route("/client/replay-transaction", methods=["POST"])
+@client_blueprint.route("/replay-transaction", methods=["POST"])
 def client_replay_transaction():
     data = ClientReplayTransactionDTO(**request.json)
     command = ["client", "replay-transaction", "--tx-digest", data.tx_digest]
@@ -689,7 +701,7 @@ def client_replay_transaction():
     return response
 
 
-@api_blueprint.route("/client/replay-batch", methods=["POST"])
+@client_blueprint.route("/replay-batch", methods=["POST"])
 def client_replay_batch():
     data = ClientReplayBatchDTO(**request.json)
     command = ["client", "replay-batch", "--path", data.path]
@@ -701,7 +713,7 @@ def client_replay_batch():
     return response
 
 
-@api_blueprint.route("/client/replay-checkpoint", methods=["POST"])
+@client_blueprint.route("/replay-checkpoint", methods=["POST"])
 def client_replay_checkpoint():
     data = ClientReplayCheckpointDTO(**request.json)
     command = [
@@ -720,7 +732,7 @@ def client_replay_checkpoint():
     return response
 
 
-@api_blueprint.route("/client/private", methods=["GET"])
+@client_blueprint.route("/private", methods=["GET"])
 def client_private():
     response = cat_command(
         "~/.sui/sui_config/sui.keystore", isJson=True, name="private_key"
@@ -731,7 +743,7 @@ def client_private():
 #### KEYTOOL ENDPOINTS ####
 
 
-@app.route("/keytool/update-alias", methods=["POST"])
+@keytool_blueprint.route("/keytool/update-alias", methods=["POST"])
 def update_alias():
     try:
         data = request.get_json()
@@ -747,7 +759,7 @@ def update_alias():
     return {"output": output}
 
 
-@app.route("/keytool/convert", methods=["POST"])
+@keytool_blueprint.route("/keytool/convert", methods=["POST"])
 def convert():
     try:
         data = request.get_json()
@@ -762,7 +774,7 @@ def convert():
     return {"output": output}
 
 
-@app.route("/keytool/decode-or-verify-tx", methods=["POST"])
+@keytool_blueprint.route("/keytool/decode-or-verify-tx", methods=["POST"])
 def decode_or_verify_tx():
     data = request.get_json()
     dto = KeytoolDecodeOrVerifyTxDTO(**data)
@@ -775,7 +787,7 @@ def decode_or_verify_tx():
     return {"output": output}
 
 
-@app.route("/keytool/decode-multi-sig", methods=["POST"])
+@keytool_blueprint.route("/keytool/decode-multi-sig", methods=["POST"])
 def decode_multi_sig():
     data = request.get_json()
     dto = KeytoolDecodeMultiSigDTO(**data)
@@ -788,7 +800,7 @@ def decode_multi_sig():
     return {"output": output}
 
 
-@app.route("/keytool/generate", methods=["POST"])
+@keytool_blueprint.route("/keytool/generate", methods=["POST"])
 def generate():
     data = request.get_json()
     dto = KeytoolGenerateDTO(**data)
@@ -801,7 +813,7 @@ def generate():
     return {"output": output}
 
 
-@app.route("/keytool/import", methods=["POST"])
+@keytool_blueprint.route("/keytool/import", methods=["POST"])
 def import_key():
     data = request.get_json()
     dto = KeytoolImportDTO(**data)
@@ -814,7 +826,7 @@ def import_key():
     return {"output": output}
 
 
-@app.route("/keytool/export", methods=["POST"])
+@keytool_blueprint.route("/keytool/export", methods=["POST"])
 def export():
     data = request.get_json()
     dto = KeytoolExportDTO(**data)
@@ -823,14 +835,14 @@ def export():
     return {"output": output}
 
 
-@app.route("/keytool/list", methods=["GET"])
+@keytool_blueprint.route("/keytool/list", methods=["GET"])
 def list_keys():
     command = ["keytool", "list"]
     output = sui_command(command)
     return {"output": output}
 
 
-@app.route("/keytool/load-keypair", methods=["POST"])
+@keytool_blueprint.route("/keytool/load-keypair", methods=["POST"])
 def load_keypair():
     data = request.get_json()
     dto = KeytoolLoadKeypairDTO(**data)
@@ -839,7 +851,9 @@ def load_keypair():
     return {"output": output}
 
 
-app.register_blueprint(api_blueprint)
+app.register_blueprint(client_blueprint, url_prefix="/client")
+app.register_blueprint(keytool_blueprint, url_prefix="/keytool")
+app.register_blueprint(start_blueprint, url_prefix="/start")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

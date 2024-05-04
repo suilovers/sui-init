@@ -17,3 +17,9 @@ def cat_command(file_path, isJson=True, name=None):
             return json.loads(json.dumps(file))
         else:
             return {name: file}
+        
+def add_optional_field(commands, optional_fields):
+    for field in optional_fields:
+        if field not in data:
+            data[field] = None
+    return data
