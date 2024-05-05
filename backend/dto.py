@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional, Dict
+from dataclasses import dataclass
 
 
 class StartDTO(BaseModel):
@@ -338,3 +339,19 @@ class KeytoolExportDTO(BaseModel):
 
 class KeytoolLoadKeypairDTO(BaseModel):
     file: str
+
+@dataclass
+class Argument:
+    title: str
+    name: str
+    type: str
+    description: str
+    default: str
+
+@dataclass
+class DTO:
+    name: str
+    description: str
+    path: str
+    arguments: List[Argument]
+    optionalArguments: Optional[List[Argument]]

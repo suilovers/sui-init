@@ -6,6 +6,7 @@ USER root
 # install sudo
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 USER linuxbrew
@@ -42,4 +43,7 @@ EXPOSE 3000
 WORKDIR /app
 COPY init.sh init.sh
 RUN chmod +x init.sh
-CMD ["./init.sh"]
+RUN dos2unix init.sh
+# CMD ["/bin/sh","./init.sh"]
+ENTRYPOINT ["/bin/sh","./init.sh"]
+# CMD ["ls"]
