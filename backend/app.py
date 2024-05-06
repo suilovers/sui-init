@@ -1,3 +1,4 @@
+import subprocess
 from flask import Blueprint, Flask, request, jsonify
 
 from flask_cors import CORS, cross_origin
@@ -79,10 +80,26 @@ info_blueprint = Blueprint("info", __name__)
 ### CLIENT ENDPOINTS ###
 @client_blueprint.route("/", methods=["GET"])
 def client():
-    response = sui_command(["client"], False)
-    if(response["null"].split(" ")[0]=="Config"):
-        return response
-    return response
+    command = ["sui", "client"]  # Assuming "sui" is the executable name
+
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    print(output)
+    main_output = "s"
+    if error:
+        print("Error:", error.decode())
+        main_output = error.decode()
+    else:
+        # Pipe the output to echo and print the result (assuming text output)
+        echo_process = subprocess.Popen(["echo", "y"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        echo_output, echo_error = echo_process.communicate(input=output)
+        if echo_error:
+            print("Error in echo:", echo_error.decode())
+            main_output = echo_error.decode()
+        else:
+            print("Combined Output:", echo_output.decode())
+            main_output = echo_output.decode()
+        return main_output
 @client_blueprint.route("/active-address", methods=["GET"])
 def client_active_address():
     """

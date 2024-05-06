@@ -10,6 +10,11 @@ def sui_command(sui_commands, isJson=True, name=None):
         result = subprocess.run(["sui"] + sui_commands, capture_output=True, text=True)
         return {name: result.stdout.strip()}
 
+def sui_multi_command(sui_commands):
+    process = subprocess.Popen(sui_commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    print(output, error)
+    return None
 
 def cat_command(file_path, isJson=True, name=None):
     expanded_path = os.path.expanduser(file_path)
