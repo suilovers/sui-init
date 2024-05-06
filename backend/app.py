@@ -128,6 +128,10 @@ def client_addresses():
     response = sui_command(["client", "addresses"])
     return response
 
+@client_blueprint.route("/balance", methods=["GET"])
+def current_balance():
+    response = sui_command(["client", "balance"])
+    return jsonify(response)
 
 @client_blueprint.route("/balance", methods=["POST"])
 def client_balance():
@@ -139,8 +143,7 @@ def client_balance():
         command.append("--with-coins")
     print(command)
     response = sui_command(command)
-    return response
-
+    return jsonify(response)
 
 @client_blueprint.route("/call", methods=["POST"])
 def client_call():
@@ -208,7 +211,7 @@ def client_envs():
     try:
         command = ["client", "envs"]
         response = sui_command(command)
-        return response
+        return jsonify(response)
     except ValidationError as e:
         return {"error": str(e)}, 400
 
@@ -252,7 +255,8 @@ def client_faucet():
         if data.url:
             command.extend(["--url", data.url])
         response = sui_command(command)
-        return response
+        print(response)
+        return jsonify(response)
     except ValidationError as e:
         return {"error": str(e)}, 400
 
@@ -917,355 +921,11 @@ def get_types():
 
 @info_blueprint.route("/", methods=["GET"])
 def get_info():
-    return jsonify(
-        [
-            {
-                "name": "Active Address",
-                "description": "Retrieves the active address of the client",
-                "path": "/active-address",
-                "arguments": [],
-                "optionalArguments": [],
-            },
-            {
-                "name": "Active Env",
-                "description": "Retrieves the active environment of the client",
-                "path": "/active-env",
-                "arguments": [],
-                "optionalArguments": [],
-            },
-            {
-                "name": "Addresses",
-                "description": "Retrieves the addresses of the client",
-                "path": "/addresses",
-                "arguments": [],
-                "optionalArguments": [],
-            },
-            {
-                "name": "Balance",
-                "description": "Retrieves the balance of the client",
-                "path": "/balance",
-                "arguments": [
-                    {
-                        "title": "Address",
-                        "name": "address",
-                        "type": "string",
-                        "description": "The address to get the balance of",
-                        "default": "default",
-                    }
-                ],
-                "optionalArguments": [
-                    {
-                        "title": "Coin Type",
-                        "name": "coin_type",
-                        "type": "string",
-                        "description": "The coin type",
-                        "default": "default",
-                    },
-                    {
-                        "title": "With Coins",
-                        "name": "with_coins",
-                        "type": "bool",
-                        "description": "Whether to include the coins",
-                        "default": "default",
-                    },
-                ],
-            },
-            {
-                "name": "Call",
-                "description": "Calls a function",
-                "path": "/call",
-                "arguments": [
-                    {
-                        "title": "Package",
-                        "name": "package",
-                        "type": "string",
-                        "description": "The package to call",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Module",
-                        "name": "module",
-                        "type": "string",
-                        "description": "The module to call",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Function",
-                        "name": "function",
-                        "type": "string",
-                        "description": "The function to call",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Gas Budget",
-                        "name": "gas_budget",
-                        "type": "string",
-                        "description": "The gas budget",
-                        "default": "default",
-                    },
-                ],
-                "optionalArguments": [
-                    {
-                        "title": "Type Args",
-                        "name": "type_args",
-                        "type": "stringarray",
-                        "description": "The type arguments",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Args",
-                        "name": "args",
-                        "type": "stringarray",
-                        "description": "The arguments",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Gas",
-                        "name": "gas",
-                        "type": "string",
-                        "description": "The gas",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Dry Run",
-                        "name": "dry_run",
-                        "type": "bool",
-                        "description": "Whether to dry run",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Serialize Unsigned Transaction",
-                        "name": "serialize_unsigned_transaction",
-                        "type": "bool",
-                        "description": "Whether to serialize unsigned transaction",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Serialize Signed Transaction",
-                        "name": "serialize_signed_transaction",
-                        "type": "bool",
-                        "description": "Whether to serialize signed transaction",
-                        "default": "default",
-                    },
-                ],
-            },
-            {
-                "name": "Chain Identifier",
-                "description": "Retrieves the chain identifier",
-                "path": "/chain-identifier",
-                "arguments": [],
-                "optionalArguments": [],
-            },
-            {
-                "name": "Dynamic Field",
-                "description": "Retrieves the dynamic field",
-                "path": "/dynamic-field",
-                "arguments": [
-                    {
-                        "title": "Object ID",
-                        "name": "object_id",
-                        "type": "string",
-                        "description": "The object ID",
-                        "default": "default",
-                    }
-                ],
-                "optionalArguments": [
-                    {
-                        "title": "Cursor",
-                        "name": "cursor",
-                        "type": "string",
-                        "description": "The cursor",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Limit",
-                        "name": "limit",
-                        "type": "int",
-                        "description": "The limit",
-                        "default": "default",
-                    },
-                ],
-            },
-            {
-                "name": "Envs",
-                "description": "Retrieves the environments",
-                "path": "/envs",
-                "arguments": [],
-                "optionalArguments": [],
-            },
-            {
-                "name": "Execute Signed Tx",
-                "description": "Executes a signed transaction",
-                "path": "/execute-signed-tx",
-                "arguments": [
-                    {
-                        "title": "Tx Bytes",
-                        "name": "tx_bytes",
-                        "type": "string",
-                        "description": "The transaction bytes",
-                        "default": "default",
-                    }
-                ],
-                "optionalArguments": [
-                    {
-                        "title": "Signatures",
-                        "name": "signatures",
-                        "type": "stringarray",
-                        "description": "The signatures",
-                        "default": "default",
-                    }
-                ],
-            },
-            {
-                "name": "Execute Combined Signed Tx",
-                "description": "Executes a combined signed transaction",
-                "path": "/execute-combined-signed-tx",
-                "arguments": [
-                    {
-                        "title": "Signed Tx Bytes",
-                        "name": "signed_tx_bytes",
-                        "type": "string",
-                        "description": "The signed transaction bytes",
-                        "default": "default",
-                    }
-                ],
-                "optionalArguments": [],
-            },
-            {
-                "name": "Faucet",
-                "description": "Faucets the client",
-                "path": "/faucet",
-                "arguments": [],
-                "optionalArguments": [
-                    {
-                        "title": "Address",
-                        "name": "address",
-                        "type": "string",
-                        "description": "The address",
-                        "default": "default",
-                    },
-                    {
-                        "title": "URL",
-                        "name": "url",
-                        "type": "string",
-                        "description": "The URL",
-                        "default": "default",
-                    },
-                ],
-            },
-            {
-                "name": "Gas",
-                "description": "Retrieves the gas",
-                "path": "/gas",
-                "arguments": [],
-                "optionalArguments": [
-                    {
-                        "title": "Owner Address",
-                        "name": "owner_address",
-                        "type": "string",
-                        "description": "The owner address",
-                        "default": "default",
-                    }
-                ],
-            },
-            {
-                "name": "Merge Coin",
-                "description": "Merges the coin",
-                "path": "/merge-coin",
-                "arguments": [
-                    {
-                        "title": "Primary Coin",
-                        "name": "primary_coin",
-                        "type": "string",
-                        "description": "The primary coin",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Coin To Merge",
-                        "name": "coin_to_merge",
-                        "type": "string",
-                        "description": "The coin to merge",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Gas Budget",
-                        "name": "gas_budget",
-                        "type": "string",
-                        "description": "The gas budget",
-                        "default": "default",
-                    },
-                ],
-                "optionalArguments": [
-                    {
-                        "title": "Gas",
-                        "name": "gas",
-                        "type": "string",
-                        "description": "The gas",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Dry Run",
-                        "name": "dry_run",
-                        "type": "bool",
-                        "description": "Whether to dry run",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Serialize Unsigned Transaction",
-                        "name": "serialize_unsigned_transaction",
-                        "type": "bool",
-                        "description": "Whether to serialize unsigned transaction",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Serialize Signed Transaction",
-                        "name": "serialize_signed_transaction",
-                        "type": "bool",
-                        "description": "Whether to serialize signed transaction",
-                        "default": "default",
-                    },
-                ],
-            },
-            {
-                "name": "New Address",
-                "description": "Creates a new address",
-                "path": "/new-address",
-                "arguments": [
-                    {
-                        "title": "Key Scheme",
-                        "name": "key_scheme",
-                        "type": "string",
-                        "description": "The key scheme",
-                        "default": "default",
-                    }
-                ],
-                "optionalArguments": [
-                    {
-                        "title": "Alias",
-                        "name": "alias",
-                        "type": "string",
-                        "description": "The alias",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Word Length",
-                        "name": "word_length",
-                        "type": "string",
-                        "description": "The word length",
-                        "default": "default",
-                    },
-                    {
-                        "title": "Derivation Path",
-                        "name": "derivation_path",
-                        "type": "string",
-                        "description": "The derivation path",
-                        "default": "default",
-                    },
-                ],
-            },
-        ]
-    )
-
+    # read all info from all.json
+    file = open("all.json", "r")
+    data = file.read()
+    file.close()
+    return data
 
 app.register_blueprint(client_blueprint, url_prefix="/client")
 app.register_blueprint(keytool_blueprint, url_prefix="/keytool")
@@ -1274,3 +934,4 @@ app.register_blueprint(info_blueprint, url_prefix="/info")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
+

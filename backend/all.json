@@ -1,0 +1,798 @@
+
+{
+    "/client":{
+        "/":{
+            "name":"Client",
+            "description":"Client endpoints",
+            "path":"/client/",
+            "arguments":[],
+            "optionalArguments":[]
+
+        },
+        "/active-address":{
+            "name":"Active Address",
+            "description":"Retrieves the active address of the client",
+            "path":"/client/active-address",
+            "arguments":[],
+            "optionalArguments":[]
+        },
+        "/active-env":{
+            "name":"Active Env",
+            "description":"Retrieves the active environment of the client",
+            "path":"/client/active-env",
+            "arguments":[],
+            "optionalArguments":[]
+        },
+        "/addresses":{
+            "name":"Addresses",
+            "description":"Retrieves the addresses of the client",
+            "path":"/client/addresses",
+            "arguments":[],
+            "optionalArguments":[]
+        },
+        "/balance":{
+            "name":"Balance",
+            "description":"Retrieves the balance of the client",
+            "path":"/client/balance",
+            "arguments":[
+                {
+                    "title":"Address",
+                    "name":"address",
+                    "type":"string",
+                    "options":[],
+                    "description":"The address to get the balance of",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Coin Type",
+                    "name":"coin_type",
+                    "type":"string",
+                    "options":[],
+                    "description":"The coin type",
+                    "default":"default"
+                },
+                {
+                    "title":"With Coins",
+                    "name":"with_coins",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to include the coins",
+                    "default":"default"
+                }
+            ]
+        },
+        "/call":{
+            "name":"Call",
+            "description":"Calls a function",
+            "path":"/client/call",
+            "arguments":[
+                {
+                    "title":"Package",
+                    "name":"package",
+                    "type":"string",
+                    "options":[],
+                    "description":"The package to call",
+                    "default":"default"
+                },
+                {
+                    "title":"Module",
+                    "name":"module",
+                    "type":"string",
+                    "options":[],
+                    "description":"The module to call",
+                    "default":"default"
+                },
+                {
+                    "title":"Function",
+                    "name":"function",
+                    "type":"string",
+                    "options":[],
+                    "description":"The function to call",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas Budget",
+                    "name":"gas_budget",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas budget",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Type Args",
+                    "name":"type_args",
+                    "type":"stringarray",
+                    "options":[],
+                    "description":"The type arguments",
+                    "default":"default"
+                },
+                {
+                    "title":"Args",
+                    "name":"args",
+                    "type":"stringarray",
+                    "options":[],
+                    "description":"The arguments",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas",
+                    "name":"gas",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas",
+                    "default":"default"
+                },
+                {
+                    "title":"Dry Run",
+                    "name":"dry_run",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to dry run",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Unsigned Transaction",
+                    "name":"serialize_unsigned_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize unsigned transaction",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Signed Transaction",
+                    "name":"serialize_signed_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize signed transaction",
+                    "default":"default"
+                }
+            ]
+        },
+        "/chain-identifier":{
+            "name":"Chain Identifier",
+            "description":"Retrieves the chain identifier",
+            "path":"/client/chain-identifier",
+            "arguments":[],
+            "optionalArguments":[]
+        },
+        "/dynamic-field":{
+            "name":"Dynamic Field",
+            "description":"Retrieves the dynamic field",
+            "path":"/client/dynamic-field",
+            "arguments":[
+                {
+                    "title":"Object ID",
+                    "name":"object_id",
+                    "type":"string",
+                    "options":[],
+                    "description":"The object ID",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Cursor",
+                    "name":"cursor",
+                    "type":"string",
+                    "options":[],
+                    "description":"The cursor",
+                    "default":"default"
+                },
+                {
+                    "title":"Limit",
+                    "name":"limit",
+                    "type":"int",
+                    "options":[],
+                    "description":"The limit",
+                    "default":"default"
+                }
+            ]
+        },
+        "/envs":{
+            "name":"Envs",
+            "description":"Retrieves the environments",
+            "path":"/client/envs",
+            "arguments":[],
+            "optionalArguments":[]
+        },
+        "/execute-signed-tx":{
+            "name":"Execute Signed Tx",
+            "description":"Executes a signed transaction",
+            "path":"/client/execute-signed-tx",
+            "arguments":[
+                {
+                    "title":"Tx Bytes",
+                    "name":"tx_bytes",
+                    "type":"string",
+                    "options":[],
+                    "description":"The transaction bytes",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Signatures",
+                    "name":"signatures",
+                    "type":"stringarray",
+                    "options":[],
+                    "description":"The signatures",
+                    "default":"default"
+                }
+            ]
+        },
+        "/execute-combined-signed-tx":{
+            "name":"Execute Combined Signed Tx",
+            "description":"Executes a combined signed transaction",
+            "path":"/client/execute-combined-signed-tx",
+            "arguments":[
+                {
+                    "title":"Signed Tx Bytes",
+                    "name":"signed_tx_bytes",
+                    "type":"string",
+                    "options":[],
+                    "description":"The signed transaction bytes",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[]
+        },
+        "/faucet":{
+            "name":"Faucet",
+            "description":"Faucets the client",
+            "path":"/client/faucet",
+            "arguments":[],
+            "optionalArguments":[
+                {
+                    "title":"Address",
+                    "name":"address",
+                    "type":"string",
+                    "options":[],
+                    "description":"The address",
+                    "default":"default"
+                },
+                {
+                    "title":"URL",
+                    "name":"url",
+                    "type":"string",
+                    "options":[],
+                    "description":"The URL",
+                    "default":"default"
+                }
+            ]
+        },
+        "/gas":{
+            "name":"Gas",
+            "description":"Retrieves the gas",
+            "path":"/client/gas",
+            "arguments":[],
+            "optionalArguments":[
+                {
+                    "title":"Owner Address",
+                    "name":"owner_address",
+                    "type":"string",
+                    "options":[],
+                    "description":"The owner address",
+                    "default":"default"
+                }
+            ]
+        },
+        "/merge-coin":{
+            "name":"Merge Coin",
+            "description":"Merges the coin",
+            "path":"/client/merge-coin",
+            "arguments":[
+                {
+                    "title":"Primary Coin",
+                    "name":"primary_coin",
+                    "type":"string",
+                    "options":[],
+                    "description":"The primary coin",
+                    "default":"default"
+                },
+                {
+                    "title":"Coin To Merge",
+                    "name":"coin_to_merge",
+                    "type":"string",
+                    "options":[],
+                    "description":"The coin to merge",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas Budget",
+                    "name":"gas_budget",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas budget",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Gas",
+                    "name":"gas",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas",
+                    "default":"default"
+                },
+                {
+                    "title":"Dry Run",
+                    "name":"dry_run",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to dry run",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Unsigned Transaction",
+                    "name":"serialize_unsigned_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize unsigned transaction",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Signed Transaction",
+                    "name":"serialize_signed_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize signed transaction",
+                    "default":"default"
+                }
+            ]
+        },
+        "/new-address":{
+            "name":"New Address",
+            "description":"Creates a new address",
+            "path":"/client/new-address",
+            "arguments":[
+                {
+                    "title":"Key Scheme",
+                    "name":"key_scheme",
+                    "type":"string",
+                    "options":[],
+                    "description":"The key scheme",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Alias",
+                    "name":"alias",
+                    "type":"string",
+                    "options":[],
+                    "description":"The alias",
+                    "default":"default"
+                },
+                {
+                    "title":"Word Length",
+                    "name":"word_length",
+                    "type":"string",
+                    "options":[],
+                    "description":"The word length",
+                    "default":"default"
+                },
+                {
+                    "title":"Derivation Path",
+                    "name":"derivation_path",
+                    "type":"string",
+                    "options":[],
+                    "description":"The derivation path",
+                    "default":"default"
+                }
+            ]
+
+        },
+        "/split-coin":{
+            "name":"Split Coin",
+            "description":"Splits the coin",
+            "path":"/client/split-coin",
+            "arguments":[
+                {
+                    "title":"Coin ID",
+                    "name":"coin_id",
+                    "type":"string",
+                    "options":[],
+                    "description":"The coin ID",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas Budget",
+                    "name":"gas_budget",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas budget",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Amounts",
+                    "name":"amounts",
+                    "type":"stringarray",
+                    "options":[],
+                    "description":"The amounts",
+                    "default":"default"
+                },
+                {
+                    "title":"Count",
+                    "name":"count",
+                    "type":"int",
+                    "options":[],
+                    "description":"The count",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas",
+                    "name":"gas",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas",
+                    "default":"default"
+                },
+                {
+                    "title":"Dry Run",
+                    "name":"dry_run",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to dry run",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Unsigned Transaction",
+                    "name":"serialize_unsigned_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize unsigned transaction",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Signed Transaction",
+                    "name":"serialize_signed_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize signed transaction",
+                    "default":"default"
+                }
+            ]
+        },
+        "/transfer":{
+            "name":"Transfer",
+            "description":"Transfers coins",
+            "path":"/client/transfer",
+            "arguments":[
+                {
+                    "title":"To",
+                    "name":"to",
+                    "type":"string",
+                    "options":[],
+                    "description":"The recipient address",
+                    "default":"default"
+                },
+                {
+                    "title":"Object ID",
+                    "name":"object_id",
+                    "type":"string",
+                    "options":[],
+                    "description":"The object ID",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas Budget",
+                    "name":"gas_budget",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas budget",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Amount",
+                    "name":"amount",
+                    "type":"string",
+                    "options":[],
+                    "description":"The amount",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas",
+                    "name":"gas",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas",
+                    "default":"default"
+                },
+                {
+                    "title":"Dry Run",
+                    "name":"dry_run",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to dry run",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Unsigned Transaction",
+                    "name":"serialize_unsigned_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize unsigned transaction",
+                    "default":"default"
+                },
+                {
+                    "title":"Serialize Signed Transaction",
+                    "name":"serialize_signed_transaction",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to serialize signed transaction",
+                    "default":"default"
+                }
+            ]
+        },
+        "/upgrade":{
+            "name":"Upgrade",
+            "description":"Upgrades the client",
+            "path":"/client/upgrade",
+            "arguments":[
+                {
+                    "title":"Upgrade Capability",
+                    "name":"upgrade_capability",
+                    "type":"string",
+                    "options":[],
+                    "description":"The upgrade capability",
+                    "default":"default"
+                },
+                {
+                    "title":"Gas Budget",
+                    "name":"gas_budget",
+                    "type":"string",
+                    "options":[],
+                    "description":"The gas budget",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Package Path",
+                    "name":"package_path",
+                    "type":"string",
+                    "options":[],
+                    "description":"The package path",
+                    "default":"default"
+                },
+                {
+                    "title":"Dev",
+                    "name":"dev",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to upgrade in dev mode",
+                    "default":"default"
+                },
+                {
+                    "title":"Test",
+                    "name":"test",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to upgrade in test mode",
+                    "default":"default"
+                },
+                {
+                    "title":"Doc",
+                    "name":"doc",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to upgrade in doc mode",
+                    "default":"default"
+                },
+                {
+                    "title":"Install Dir",
+                    "name":"install_dir",
+                    "type":"string",
+                    "options":[],
+                    "description":"The install directory",
+                    "default":"default"
+                },
+                {
+                    "title":"Force",
+                    "name":"force",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to force the upgrade",
+                    "default":"default"
+                },
+                {
+                    "title":"Fetch Deps Only",
+                    "name":"fetch_deps_only",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to fetch dependencies only",
+                    "default":"default"
+                },
+                {
+                    "title":"Skip Fetch Latest Git Deps",
+                    "name":"skip_fetch_latest_git_deps",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to skip fetching the latest git dependencies",
+                    "default":"default"
+                },
+                {
+                    "title":"Default Move Flavor",
+                    "name":"default_move_flavor",
+                    "type":"string",
+                    "options":[],
+                    "description":"The default move flavor",
+                    "default":"default"
+                },
+
+                {
+                    "title":"Default Move Edition",
+                    "name":"default_move_edition",
+                    "type":"string",
+                    "options":[],
+                    "description":"The default move edition",
+                    "default":"default"
+                },
+                {
+                    "title":"Dependencies Are Root",
+                    "name":"dependencies_are_root",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether the dependencies are root",
+                    "default":"default"
+                },
+                {
+                    "title":"Silence Warnings",
+                    "name":"silence_warnings",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to silence warnings",
+                    "default":"default"
+                },
+                {
+                    "title":"Warnings Are Errors",
+                    "name":"warnings_are_errors",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether warnings are errors",
+                    "default":"default"
+                },
+                {
+                    "title":"No Lint",
+                    "name":"no_lint",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to lint",
+                    "default":"default"
+                },
+                {
+                    "title":"Lint",
+                    "name":"lint",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to lint",
+                    "default":"default"
+                },
+                {
+                    "title":"Verify Deps",
+                    "name":"verify_deps",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to verify dependencies",
+                    "default":"default"
+                },
+                {
+                    "title":"Skip Source",
+                    "name":"skip_source",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to skip the source",
+                    "default":"default"
+                },
+                {
+                    "title":"Address Override",
+                    "name":"address_override",
+                    "type":"string",
+                    "options":[],
+                    "description":"The address override",
+                    "default":"default"
+                }
+
+            ]
+        },
+        "/profile-transaction":{
+            "name":"Profile Transaction",
+            "description":"Profiles a transaction",
+            "path":"/client/profile-transaction",
+            "arguments":[
+                {
+                    "title":"Tx Digest",
+                    "name":"tx_digest",
+                    "type":"string",
+                    "options":[],
+                    "description":"The transaction digest",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Profile Output",
+                    "name":"profile_output",
+                    "type":"string",
+                    "options":[],
+                    "description":"The profile output",
+                    "default":"default"
+                },
+                {
+                    "title":"JSON",
+                    "name":"json",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to output in JSON",
+                    "default":"default"
+                }
+            ]
+        },
+        "/replay-transaction":{
+            "name":"Replay Transaction",
+            "description":"Replays a transaction",
+            "path":"/client/replay-transaction",
+            "arguments":[
+                {
+                    "title":"Tx Digest",
+                    "name":"tx_digest",
+                    "type":"string",
+                    "options":[],
+                    "description":"The transaction digest",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Gas Info",
+                    "name":"gas_info",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to include gas info",
+                    "default":"default"
+                },
+                {
+                    "title":"PTB Info",
+                    "name":"ptb_info",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to include PTB info",
+                    "default":"default"
+                },
+                {
+                    "title":"Executor Version",
+                    "name":"executor_version",
+                    "type":"string",
+                    "options":[],
+                    "description":"The executor version",
+                    "default":"default"
+                },
+                {
+                    "title":"Protocol Version",
+                    "name":"protocol_version",
+                    "type":"string",
+                    "options":[],
+                    "description":"The protocol version",
+                    "default":"default"
+                },
+                {
+                    "title":"JSON",
+                    "name":"json",
+                    "type":"bool",
+                    "options":[],
+                    "description":"Whether to output in JSON",
+                    "default":"default"
+                }
+            ]
+        }
+    }
+}
