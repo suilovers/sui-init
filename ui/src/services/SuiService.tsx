@@ -1,5 +1,5 @@
 import _axios from '../config/axios';
-import { ExampleTestReponse } from '../types/sui/response';
+import { CommandDTO, ExampleTestReponse } from '../types/sui/response';
 
 /**
  * Makes a test call to the server.
@@ -7,5 +7,14 @@ import { ExampleTestReponse } from '../types/sui/response';
  */
 export async function testCall(): Promise<ExampleTestReponse> {
     const response = await _axios.get('/test');
+    return response.data;
+}
+
+/**
+ * Retrieves the list of commands from the server.
+ * @returns A promise that resolves to an array of CommandDTO objects.
+ */
+export async function getCommandList(): Promise<CommandDTO[]> {
+    const response = await _axios.get('/info');
     return response.data;
 }

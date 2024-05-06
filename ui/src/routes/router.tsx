@@ -1,5 +1,6 @@
 import { LazyExoticComponent, Suspense, lazy } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { CustomLayoutView } from '../layout';
 
 /**
  * A higher-order component that wraps a lazy-loaded component with a `Suspense` component
@@ -24,6 +25,7 @@ export default function Router() {
             router={createBrowserRouter([
                 {
                     path: '',
+                    element: <CustomLayoutView />,
                     children: [
                         {
                             path: '/',
