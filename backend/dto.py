@@ -355,3 +355,13 @@ class DTO:
     path: str
     arguments: List[Argument]
     optionalArguments: Optional[List[Argument]]
+
+@dataclass
+class TypeDTO:
+    name: str
+    is_array: bool
+    is_choice: bool
+    choices: Optional[List[str]] = None
+    def __post_init__(self):
+        if self.choices is None:
+            self.choices = []
