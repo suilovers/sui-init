@@ -11,7 +11,7 @@
 **/tests
 **/spec
 **/example
-
+**/__pycache__
 # mac folders and files
 **/.DS_Store
 **/.AppleDouble
