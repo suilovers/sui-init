@@ -7,6 +7,7 @@ USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     dos2unix \
+    expect \
     && rm -rf /var/lib/apt/lists/*
 
 USER linuxbrew
@@ -42,6 +43,7 @@ EXPOSE 3000
 # ADD init.sh
 WORKDIR /app
 COPY init.sh init.sh
+COPY expect.sh expect.sh
 RUN chmod +x init.sh
 RUN dos2unix init.sh
 # CMD ["/bin/sh","./init.sh"]
