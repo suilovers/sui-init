@@ -1,6 +1,6 @@
 from flask import Blueprint, Flask, request, jsonify
 
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from pydantic import ValidationError
 from dto import (
     StartDTO,
@@ -46,7 +46,11 @@ from dto import (
 from utils import sui_command, cat_command
 
 app = Flask(__name__)
-cors = CORS(app)
+cors = CORS(app, resource={
+    r"/*":{
+        "origins":"*"
+    }
+})
 app.config['CORS_HEADERS'] = 'Content-Type'
 client_blueprint = Blueprint("client", __name__)
 keytool_blueprint = Blueprint("keytool", __name__)
