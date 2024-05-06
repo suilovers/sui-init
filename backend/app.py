@@ -1,5 +1,6 @@
 from flask import Blueprint, Flask, request, jsonify
 
+from flask_cors import CORS
 from pydantic import ValidationError
 from dto import (
     StartDTO,
@@ -45,31 +46,39 @@ from dto import (
 from utils import sui_command, cat_command
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 client_blueprint = Blueprint("client", __name__)
 keytool_blueprint = Blueprint("keytool", __name__)
 start_blueprint = Blueprint("start", __name__)
 info_blueprint = Blueprint("info", __name__)
 
 
-@start_blueprint.route("/", methods=["POST"])
-def start():
-    """
-    Starts the application with the provided configuration.
+# @start_blueprint.route("/", methods=["POST"])
+# def start():
+#     """
+#     Starts the application with the provided configuration.
 
-    Returns:
-        The response from the `sui_command` function.
-    """
-    data = StartDTO(**request.json)
-    command = ["start"]
-    if data.network_config:
-        command.extend(["--network.config", data.network_config])
-    if data.no_full_node:
-        command.append("--no-full-node")
-    response = sui_command(command, isJson=False)
-    return response
+#     Returns:
+#         The response from the `sui_command` function.
+#     """
+#     data = StartDTO(**request.json)
+#     command = ["start"]
+#     if data.network_config:
+#         command.extend(["--network.config", data.network_config])
+#     if data.no_full_node:
+#         command.append("--no-full-node")
+#     response = sui_command(command, isJson=False)
+#     return response
 
 
 ### CLIENT ENDPOINTS ###
+@client_blueprint.route("/", methods=["GET"])
+def client():
+    response = sui_command(["client"], False)
+    if(response["null"].split(" ")[0]=="Config"):
+        return response
+    return response
 @client_blueprint.route("/active-address", methods=["GET"])
 def client_active_address():
     """
