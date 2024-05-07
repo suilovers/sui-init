@@ -1,4 +1,6 @@
 #!/bin/bash
+# rust setup
+rustup default stable
 
 # for initial process
 chmod +x expect.sh
