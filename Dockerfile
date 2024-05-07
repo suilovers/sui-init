@@ -15,14 +15,21 @@ USER linuxbrew
 RUN brew --version
 RUN brew install node
 RUN brew install yarn
-RUN brew install sui
+
+RUN curl -fsSL https://github.com/MystenLabs/sui/releases/download/mainnet-v1.23.1/sui-mainnet-v1.23.1-ubuntu-x86_64.tgz -o sui.tgz
+RUN tar -xvzf sui.tgz
+RUN sudo mv sui /usr/local/bin/sui
+RUN sudo mv sui-test-validator /usr/local/bin/sui-test-validator
+RUN sudo chmod +x /usr/local/bin/sui
+RUN sudo chmod +x /usr/local/bin/sui-test-validator
+RUN rm sui.tgz
+ENV PATH="/usr/local/bin:${PATH}"
 
 # Install Rust and Cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ## Add Cargo to PATH
 ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
 RUN cargo --version
-
 
 WORKDIR /app
 
