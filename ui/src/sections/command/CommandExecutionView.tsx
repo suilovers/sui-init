@@ -1,38 +1,37 @@
-import { Button, FormControl, TextField } from '@mui/material';
-import { useState } from 'react';
+import { Card, CardContent, Typography } from '@mui/material';
+import { CallStatus } from '../../config';
+import CommandExecutionForm from './CommandExecutionForm';
+import CommandExecutionResult from './CommandExecutionResult';
+import { useDirectCall } from './hooks/useDirectCall';
 import { useLoadCommand } from './hooks/useLoadCommand';
 import { useSubmitCall } from './hooks/useSubmitCall';
 
 export default function CommandExecutionView() {
     const { command, status } = useLoadCommand();
-    const { status: callStatus, submitCall } = useSubmitCall(command?.path as string);
+    const isRequiredForm = command?.arguments.length! > 0 || command?.optionalArguments.length! > 0;
+    const { status: directCallStatus, response: directResponse } = useDirectCall(!isRequiredForm, command?.path);
+    const { status: formCallStatus, onSubmit, response: formResponse } = useSubmitCall(command?.path as string);
 
-    const [values, setValues] = useState({
-        name: '',
-        email: ''
-    });
+    console.log(isRequiredForm);
+    if (formCallStatus === CallStatus.SUCCESS || directCallStatus === CallStatus.SUCCESS) {
+        return <CommandExecutionResult response={formResponse || directResponse} />;
+    }
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues({
-            ...values,
-            [event.target.name]: event.target.value
-        });
-    };
+    if (isRequiredForm) {
+        return (
+            <Card sx={{ minWidth: 800 }}>
+                <CardContent>
+                    <Typography variant="h5" gutterBottom>
+                        {command?.name}
+                    </Typography>
+                    <Typography color="text.secondary" variant="subtitle1" component="div">
+                        {command?.description}
+                    </Typography>
+                    <CommandExecutionForm command={command} onSubmit={onSubmit} />
+                </CardContent>
+            </Card>
+        );
+    }
 
-    return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                submitCall();
-            }}
-        >
-            <FormControl fullWidth>
-                <TextField name="name" label="Name" value={values.name} onChange={handleChange} />
-                <TextField name="email" label="Email" value={values.email} onChange={handleChange} />
-                <Button type="submit" variant="contained" color="primary">
-                    Submit
-                </Button>
-            </FormControl>
-        </form>
-    );
+    return null;
 }

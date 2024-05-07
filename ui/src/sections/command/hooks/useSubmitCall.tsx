@@ -6,7 +6,7 @@ export function useSubmitCall(path: string) {
     const [status, setStatus] = useState<CallStatus>(CallStatus.LOADING);
     const [response, setResponse] = useState<any>(null);
 
-    const submitCall = async () => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             if (!path) throw new Error('Path is required.');
             setStatus(CallStatus.LOADING);
@@ -19,5 +19,5 @@ export function useSubmitCall(path: string) {
         }
     };
 
-    return { status, response, submitCall };
+    return { status, response, onSubmit };
 }

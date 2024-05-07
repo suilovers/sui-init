@@ -15,7 +15,7 @@ export async function testCall(): Promise<ExampleTestReponse> {
  * @returns A promise that resolves to an array of CommandDTO objects.
  */
 export async function fetchCommandList() {
-    const response = await _axios.get('/command/all');
+    const response = await _axios.post('/command/all');
     return response.data;
 }
 
@@ -39,6 +39,6 @@ export async function fetchCommand(parentCommand: string, childCommand: string) 
  * @returns A Promise that resolves to the fetched data.
  */
 export async function fetchCall(path: string) {
-    const response = await _axios.get(path);
+    const response = await _axios.post(path);
     return response.data;
 }
