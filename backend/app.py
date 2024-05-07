@@ -935,7 +935,7 @@ def get_specific_info():
     for path in paths:
         data = data[path]
     return data
-    
+
 app.register_blueprint(client_blueprint, url_prefix="/client")
 app.register_blueprint(keytool_blueprint, url_prefix="/keytool")
 app.register_blueprint(start_blueprint, url_prefix="/start")

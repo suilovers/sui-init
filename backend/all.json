@@ -794,5 +794,234 @@
                 }
             ]
         }
+    },
+    "/keytool":{
+        "/":{
+            "name":"Keytool",
+            "description":"Keytool endpoints",
+            "path":"/keytool/",
+            "arguments":[],
+            "optionalArguments":[]
+        },
+        "/update-alias":{
+            "name":"Update Alias",
+            "description":"Updates an alias",
+            "path":"/keytool/update-alias",
+            "arguments":[
+                {
+                    "title":"Old Alias",
+                    "name":"old_alias",
+                    "type":"string",
+                    "options":[],
+                    "description":"The old alias",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"New Alias",
+                    "name":"new_alias",
+                    "type":"string",
+                    "options":[],
+                    "description":"The new alias",
+                    "default":"default"
+                }
+            ]
+        },
+        "/convert":{
+            "name":"Convert",
+            "description":"Converts a value",
+            "path":"/keytool/convert",
+            "arguments":[
+                {
+                    "title":"Value",
+                    "name":"value",
+                    "type":"string",
+                    "options":[],
+                    "description":"The value",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[]
+        },
+        "/decode-or-verify-tx":{
+            "name":"Decode or Verify Tx",
+            "description":"Decodes or verifies a transaction",
+            "path":"/keytool/decode-or-verify-tx",
+            "arguments":[
+                {
+                    "title":"Tx Bytes",
+                    "name":"tx_bytes",
+                    "type":"string",
+                    "options":[],
+                    "description":"The transaction bytes",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Sig",
+                    "name":"sig",
+                    "type":"string",
+                    "options":[],
+                    "description":"The signature",
+                    "default":"default"
+                },
+                {
+                    "title":"Cur Epoch",
+                    "name":"cur_epoch",
+                    "type":"int",
+                    "options":[],
+                    "description":"The current epoch",
+                    "default":"default"
+                }
+            ]
+        },
+        "/decode-multi-sig":{
+            "name":"Decode Multi Sig",
+            "description":"Decodes a multi signature",
+            "path":"/keytool/decode-multi-sig",
+            "arguments":[
+                {
+                    "title":"Multisig",
+                    "name":"multisig",
+                    "type":"string",
+                    "options":[],
+                    "description":"The multisig",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Tx Bytes",
+                    "name":"tx_bytes",
+                    "type":"string",
+                    "options":[],
+                    "description":"The transaction bytes",
+                    "default":"default"
+                },
+                {
+                    "title":"Cur Epoch",
+                    "name":"cur_epoch",
+                    "type":"int",
+                    "options":[],
+                    "description":"The current epoch",
+                    "default":"default"
+                }
+            ]
+        },
+        "/generate":{
+            "name":"Generate",
+            "description":"Generates a keypair",
+            "path":"/keytool/generate",
+            "arguments":[
+                {
+                    "title":"Key Scheme",
+                    "name":"key_scheme",
+                    "type":"string",
+                    "options":[],
+                    "description":"The key scheme",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Derivation Path",
+                    "name":"derivation_path",
+                    "type":"string",
+                    "options":[],
+                    "description":"The derivation path",
+                    "default":"default"
+                },
+                {
+                    "title":"Word Length",
+                    "name":"word_length",
+                    "type":"string",
+                    "options":[],
+                    "description":"The word length",
+                    "default":"default"
+                }
+            ]
+        },
+        "/import":{
+            "name":"Import",
+            "description":"Imports a keypair",
+            "path":"/keytool/import",
+            "arguments":[
+                {
+                    "title":"Input String",
+                    "name":"input_string",
+                    "type":"string",
+                    "options":[],
+                    "description":"The input string",
+                    "default":"default"
+                },
+                {
+                    "title":"Key Scheme",
+                    "name":"key_scheme",
+                    "type":"string",
+                    "options":[],
+                    "description":"The key scheme",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[
+                {
+                    "title":"Derivation Path",
+                    "name":"derivation_path",
+                    "type":"string",
+                    "options":[],
+                    "description":"The derivation path",
+                    "default":"default"
+                },
+                {
+                    "title":"Alias",
+                    "name":"alias",
+                    "type":"string",
+                    "options":[],
+                    "description":"The alias",
+                    "default":"default"
+                }
+            ]
+        },
+        "/export":{
+            "name":"Export",
+            "description":"Exports a keypair",
+            "path":"/keytool/export",
+            "arguments":[
+                {
+                    "title":"Key Identity",
+                    "name":"key_identity",
+                    "type":"string",
+                    "options":[],
+                    "description":"The key identity",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[]
+        },
+        "/list":{
+            "name":"List",
+            "description":"Lists the keys",
+            "path":"/keytool/list",
+            "arguments":[],
+            "optionalArguments":[]
+        },
+        "/load-keypair":{
+            "name":"Load Keypair",
+            "description":"Loads a keypair",
+            "path":"/keytool/load-keypair",
+            "arguments":[
+                {
+                    "title":"File",
+                    "name":"file",
+                    "type":"string",
+                    "options":[],
+                    "description":"The file",
+                    "default":"default"
+                }
+            ],
+            "optionalArguments":[]
+        }
     }
 }
