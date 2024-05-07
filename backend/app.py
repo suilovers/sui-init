@@ -2,10 +2,9 @@ import json
 import subprocess
 from flask import Blueprint, Flask, request, jsonify
 
-from flask_cors import CORS, cross_origin
+from flask_cors import cross_origin, CORS
 from pydantic import ValidationError
 from dto import (
-    StartDTO,
     ClientBalanceDTO,
     KeytoolConvertDTO,
     ClientCallDTO,
@@ -48,13 +47,6 @@ from dto import (
 from utils import sui_command, cat_command
 
 app = Flask(__name__)
-cors = CORS(app, resource={r"/*": {"origins": "*"}})
-app.config["CORS_HEADERS"] = "Content-Type"
-client_blueprint = Blueprint("client", __name__)
-keytool_blueprint = Blueprint("keytool", __name__)
-start_blueprint = Blueprint("start", __name__)
-info_blueprint = Blueprint("info", __name__)
-
 
 # @start_blueprint.route("/", methods=["POST"])
 # def start():
@@ -75,11 +67,13 @@ info_blueprint = Blueprint("info", __name__)
 
 
 ### CLIENT ENDPOINTS ###
-@client_blueprint.route("/", methods=["GET"])
+@app.route("/client/", methods=["POST"])
 def client():
     command = ["sui", "client"]  # Assuming "sui" is the executable name
 
-    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(
+        command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
     output, error = process.communicate(input=b"y\n\n0\n")
     print("Output:", output.decode(), "Error:", error.decode())
     main_output = "s"
@@ -105,7 +99,7 @@ def client():
     #     return main_output
 
 
-@client_blueprint.route("/active-address", methods=["GET"])
+@app.route("/client/active-address", methods=["POST"])
 def client_active_address():
     """
     Retrieves the active address of the client.
@@ -118,23 +112,25 @@ def client_active_address():
     return {"active_address": response}
 
 
-@client_blueprint.route("/active-env", methods=["GET"])
+@app.route("/client/active-env", methods=["POST"])
 def client_active_env():
     response = sui_command(["client", "active-env"])
     return {"active_env": response}
 
 
-@client_blueprint.route("/addresses", methods=["GET"])
+@app.route("/client/addresses", methods=["POST"])
 def client_addresses():
     response = sui_command(["client", "addresses"])
     return response
 
-@client_blueprint.route("/balance", methods=["GET"])
+
+@app.route("/client/balance", methods=["POST"])
 def current_balance():
     response = sui_command(["client", "balance"])
     return jsonify(response)
 
-@client_blueprint.route("/balance", methods=["POST"])
+
+@app.route("/client/balance", methods=["POST"])
 def client_balance():
     data = ClientBalanceDTO(**request.json)
     command = ["client", "balance", data.address]
@@ -146,7 +142,8 @@ def client_balance():
     response = sui_command(command)
     return jsonify(response)
 
-@client_blueprint.route("/call", methods=["POST"])
+
+@app.route("/client/call", methods=["POST"])
 def client_call():
     data = ClientCallDTO(**request.json)
     command = [
@@ -158,8 +155,8 @@ def client_call():
         data.module,
         "--function",
         data.function,
-        "--gas-budget",
-        data.gas_budget,
+        "--gas-budPOST",
+        data.gas_budPOST,
     ]
 
     if data.package:
@@ -171,8 +168,8 @@ def client_call():
     if data.type_args:
         for arg in data.type_args:
             command.extend(["--type-args", arg])
-    if data.gas_budget:
-        command.extend(["--gas-budget", data.gas_budget])
+    if data.gas_budPOST:
+        command.extend(["--gas-budPOST", data.gas_budPOST])
     if data.args:
         for arg in data.args:
             command.extend(["--args", arg])
@@ -188,14 +185,14 @@ def client_call():
     return response
 
 
-@client_blueprint.route("/chain-identifier", methods=["GET"])
+@app.route("/client/chain-identifier", methods=["POST"])
 def client_chain_identifier():
     command = ["client", "chain-identifier"]
     response = sui_command(command)
     return response
 
 
-@client_blueprint.route("/dynamic-field", methods=["POST"])
+@app.route("/client/dynamic-field", methods=["POST"])
 def client_dynamic_field():
     data = ClientDynamicFieldDTO(**request.json)
     command = ["client", "dynamic-field", data.object_id]
@@ -207,7 +204,7 @@ def client_dynamic_field():
     return response
 
 
-@client_blueprint.route("/envs", methods=["GET"])
+@app.route("/client/envs", methods=["POST"])
 def client_envs():
     try:
         command = ["client", "envs"]
@@ -217,7 +214,7 @@ def client_envs():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/execute-signed-tx", methods=["POST"])
+@app.route("/client/execute-signed-tx", methods=["POST"])
 def client_execute_signed_tx():
     try:
         data = ClientExecuteSignedTxDTO(**request.json)
@@ -230,7 +227,7 @@ def client_execute_signed_tx():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/execute-combined-signed-tx", methods=["POST"])
+@app.route("/client/execute-combined-signed-tx", methods=["POST"])
 def client_execute_combined_signed_tx():
     try:
         data = ClientExecuteCombinedSignedTxDTO(**request.json)
@@ -246,7 +243,7 @@ def client_execute_combined_signed_tx():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/faucet", methods=["GET"])
+@app.route("/client/faucet", methods=["POST"])
 def client_faucet():
     try:
         data = ClientFaucetDTO(**request.args)
@@ -262,7 +259,7 @@ def client_faucet():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/gas", methods=["GET"])
+@app.route("/client/gas", methods=["POST"])
 def client_gas():
     try:
         data = ClientGasDTO(**request.args)
@@ -275,7 +272,7 @@ def client_gas():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/merge-coin", methods=["POST"])
+@app.route("/client/merge-coin", methods=["POST"])
 def client_merge_coin():
     try:
         data = ClientMergeCoinDTO(**request.json)
@@ -286,8 +283,8 @@ def client_merge_coin():
             data.primary_coin,
             "--coin-to-merge",
             data.coin_to_merge,
-            "--gas-budget",
-            data.gas_budget,
+            "--gas-budPOST",
+            data.gas_budPOST,
         ]
         if data.gas:
             command.extend(["--gas", data.gas])
@@ -303,7 +300,7 @@ def client_merge_coin():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/new-address", methods=["POST"])
+@app.route("/client/new-address", methods=["POST"])
 def client_new_address():
     try:
         data = ClientNewAddressDTO(**request.json)
@@ -320,7 +317,7 @@ def client_new_address():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/new-env", methods=["POST"])
+@app.route("/client/new-env", methods=["POST"])
 def client_new_env():
     try:
         data = ClientNewEnvDTO(**request.json)
@@ -333,7 +330,7 @@ def client_new_env():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/object", methods=["GET"])
+@app.route("/client/object", methods=["POST"])
 def client_object():
     try:
         data = ClientObjectDTO(**request.args)
@@ -346,7 +343,7 @@ def client_object():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/objects", methods=["GET"])
+@app.route("/client/objects", methods=["POST"])
 def client_objects():
     try:
         data = ClientObjectsDTO(**request.args)
@@ -359,11 +356,11 @@ def client_objects():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/pay", methods=["POST"])
+@app.route("/client/pay", methods=["POST"])
 def client_pay():
     try:
         data = ClientPayDTO(**request.json)
-        command = ["client", "pay", "--gas-budget", data.gas_budget]
+        command = ["client", "pay", "--gas-budPOST", data.gas_budPOST]
         command.extend(["--input-coins"] + data.input_coins)
         command.extend(["--recipients"] + data.recipients)
         command.extend(["--amounts"] + data.amounts)
@@ -373,7 +370,7 @@ def client_pay():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/pay-all-sui", methods=["POST"])
+@app.route("/client/pay-all-sui", methods=["POST"])
 def client_pay_all_sui():
     try:
         data = ClientPayAllSuiDTO(**request.json)
@@ -382,8 +379,8 @@ def client_pay_all_sui():
             "pay-all-sui",
             "--recipient",
             data.recipient,
-            "--gas-budget",
-            data.gas_budget,
+            "--gas-budPOST",
+            data.gas_budPOST,
         ]
         command.extend(["--input-coins"] + data.input_coins)
         response = sui_command(command)
@@ -392,11 +389,11 @@ def client_pay_all_sui():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/pay-sui", methods=["POST"])
+@app.route("/client/pay-sui", methods=["POST"])
 def client_pay_sui():
     try:
         data = ClientPaySuiDTO(**request.json)
-        command = ["client", "pay-sui", "--gas-budget", data.gas_budget]
+        command = ["client", "pay-sui", "--gas-budPOST", data.gas_budPOST]
         command.extend(["--input-coins"] + data.input_coins)
         command.extend(["--recipients"] + data.recipients)
         command.extend(["--amounts"] + data.amounts)
@@ -406,7 +403,7 @@ def client_pay_sui():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/ptb", methods=["POST"])
+@app.route("/client/ptb", methods=["POST"])
 def client_ptb():
     try:
         data = ClientPtbDTO(**request.json)
@@ -416,8 +413,8 @@ def client_ptb():
                 command.extend(["--assign", name, value])
         if data.gas_coin:
             command.extend(["--gas-coin", data.gas_coin])
-        if data.gas_budget:
-            command.extend(["--gas-budget", data.gas_budget])
+        if data.gas_budPOST:
+            command.extend(["--gas-budPOST", data.gas_budPOST])
         # Add similar checks for other options...
         response = sui_command(command)
         return response
@@ -425,10 +422,10 @@ def client_ptb():
         return {"error": str(e)}, 400
 
 
-@client_blueprint.route("/publish", methods=["POST"])
+@app.route("/client/publish", methods=["POST"])
 def client_publish():
     data = ClientPublishDTO(**request.json)
-    command = ["client", "publish", "--gas-budget", data.gas_budget]
+    command = ["client", "publish", "--gas-budPOST", data.gas_budPOST]
     if data.package_path != ".":
         command.append(data.package_path)
     if data.dev:
@@ -475,7 +472,7 @@ def client_publish():
     return response
 
 
-@client_blueprint.route("/split-coin", methods=["POST"])
+@app.route("/client/split-coin", methods=["POST"])
 def client_split_coin():
     data = ClientSplitCoinDTO(**request.json)
     command = [
@@ -483,8 +480,8 @@ def client_split_coin():
         "split-coin",
         "--coin-id",
         data.coin_id,
-        "--gas-budget",
-        data.gas_budget,
+        "--gas-budPOST",
+        data.gas_budPOST,
     ]
     if data.amounts:
         command.extend(["--amounts"] + list(map(str, data.amounts)))
@@ -502,7 +499,7 @@ def client_split_coin():
     return response
 
 
-@client_blueprint.route("/switch", methods=["POST"])
+@app.route("/client/switch", methods=["POST"])
 def client_switch():
     data = ClientSwitchDTO(**request.json)
     command = ["client", "switch"]
@@ -514,7 +511,7 @@ def client_switch():
     return response
 
 
-@client_blueprint.route("/tx-block", methods=["POST"])
+@app.route("/client/tx-block", methods=["POST"])
 def client_tx_block():
     data = ClientTxBlockDTO(**request.json)
     command = ["client", "tx-block", data.digest]
@@ -522,7 +519,7 @@ def client_tx_block():
     return response
 
 
-@client_blueprint.route("/transfer", methods=["POST"])
+@app.route("/client/transfer", methods=["POST"])
 def client_transfer():
     data = ClientTransferDTO(**request.json)
     command = [
@@ -532,8 +529,8 @@ def client_transfer():
         data.to,
         "--object-id",
         data.object_id,
-        "--gas-budget",
-        data.gas_budget,
+        "--gas-budPOST",
+        data.gas_budPOST,
     ]
     if data.gas:
         command.extend(["--gas", data.gas])
@@ -547,7 +544,7 @@ def client_transfer():
     return response
 
 
-@client_blueprint.route("/transfer-sui", methods=["POST"])
+@app.route("/client/transfer-sui", methods=["POST"])
 def client_transfer_sui():
     data = ClientTransferSuiDTO(**request.json)
     command = [
@@ -557,8 +554,8 @@ def client_transfer_sui():
         data.to,
         "--sui-coin-object-id",
         data.sui_coin_object_id,
-        "--gas-budget",
-        data.gas_budget,
+        "--gas-budPOST",
+        data.gas_budPOST,
     ]
     if data.amount:
         command.extend(["--amount", data.amount])
@@ -572,7 +569,7 @@ def client_transfer_sui():
     return response
 
 
-@client_blueprint.route("/upgrade", methods=["POST"])
+@app.route("/client/upgrade", methods=["POST"])
 def client_upgrade():
     data = ClientUpgradeDTO(**request.json)
     command = [
@@ -580,8 +577,8 @@ def client_upgrade():
         "upgrade",
         "--upgrade-capability",
         data.upgrade_capability,
-        "--gas-budget",
-        data.gas_budget,
+        "--gas-budPOST",
+        data.gas_budPOST,
     ]
     if data.package_path:
         command.append(data.package_path)
@@ -629,7 +626,7 @@ def client_upgrade():
     return response
 
 
-@client_blueprint.route("/verify-bytecode-meter", methods=["POST"])
+@app.route("/client/verify-bytecode-meter", methods=["POST"])
 def client_verify_bytecode_meter():
     data = ClientVerifyBytecodeMeterDTO(**request.json)
     command = ["client", "verify-bytecode-meter", "--package", data.package]
@@ -670,7 +667,7 @@ def client_verify_bytecode_meter():
     return response
 
 
-@client_blueprint.route("/verify-source", methods=["POST"])
+@app.route("/client/verify-source", methods=["POST"])
 def client_verify_source():
     data = ClientVerifySourceDTO(**request.json)
     command = ["client", "verify-source", data.package_path]
@@ -712,7 +709,7 @@ def client_verify_source():
     return response
 
 
-@client_blueprint.route("/profile-transaction", methods=["POST"])
+@app.route("/client/profile-transaction", methods=["POST"])
 def client_profile_transaction():
     data = ClientProfileTransactionDTO(**request.json)
     command = ["client", "profile-transaction", "--tx-digest", data.tx_digest]
@@ -724,7 +721,7 @@ def client_profile_transaction():
     return response
 
 
-@client_blueprint.route("/replay-transaction", methods=["POST"])
+@app.route("/client/replay-transaction", methods=["POST"])
 def client_replay_transaction():
     data = ClientReplayTransactionDTO(**request.json)
     command = ["client", "replay-transaction", "--tx-digest", data.tx_digest]
@@ -742,7 +739,7 @@ def client_replay_transaction():
     return response
 
 
-@client_blueprint.route("/replay-batch", methods=["POST"])
+@app.route("/client/replay-batch", methods=["POST"])
 def client_replay_batch():
     data = ClientReplayBatchDTO(**request.json)
     command = ["client", "replay-batch", "--path", data.path]
@@ -754,7 +751,7 @@ def client_replay_batch():
     return response
 
 
-@client_blueprint.route("/replay-checkpoint", methods=["POST"])
+@app.route("/client/replay-checkpoint", methods=["POST"])
 def client_replay_checkpoint():
     data = ClientReplayCheckpointDTO(**request.json)
     command = [
@@ -773,7 +770,7 @@ def client_replay_checkpoint():
     return response
 
 
-@client_blueprint.route("/private", methods=["GET"])
+@app.route("/client/private", methods=["POST"])
 def client_private():
     response = cat_command(
         "~/.sui/sui_config/sui.keystore", isJson=True, name="private_key"
@@ -784,10 +781,10 @@ def client_private():
 #### KEYTOOL ENDPOINTS ####
 
 
-@keytool_blueprint.route("/update-alias", methods=["POST"])
+@app.route("/keytool/update-alias", methods=["POST"])
 def update_alias():
     try:
-        data = request.get_json()
+        data = request.POST_json()
         dto = KeytoolUpdateAliasDTO(**data)
     except:
         return jsonify({"error": "old_alias is required"}), 400
@@ -800,10 +797,10 @@ def update_alias():
     return {"output": output}
 
 
-@keytool_blueprint.route("/convert", methods=["POST"])
+@app.route("/keytool/convert", methods=["POST"])
 def convert():
     try:
-        data = request.get_json()
+        data = request.POST_json()
         dto = KeytoolConvertDTO(**data)
     except:
         return jsonify({"error": "value is required"}), 400
@@ -815,9 +812,9 @@ def convert():
     return {"output": output}
 
 
-@keytool_blueprint.route("/decode-or-verify-tx", methods=["POST"])
+@app.route("/keytool/decode-or-verify-tx", methods=["POST"])
 def decode_or_verify_tx():
-    data = request.get_json()
+    data = request.POST_json()
     dto = KeytoolDecodeOrVerifyTxDTO(**data)
     command = ["keytool", "decode-or-verify-tx", "--tx-bytes", dto.tx_bytes]
     if dto.sig:
@@ -828,9 +825,9 @@ def decode_or_verify_tx():
     return {"output": output}
 
 
-@keytool_blueprint.route("/decode-multi-sig", methods=["POST"])
+@app.route("/keytool/decode-multi-sig", methods=["POST"])
 def decode_multi_sig():
-    data = request.get_json()
+    data = request.POST_json()
     dto = KeytoolDecodeMultiSigDTO(**data)
     command = ["keytool", "decode-multi-sig", "--multisig", dto.multisig]
     if dto.tx_bytes:
@@ -841,9 +838,9 @@ def decode_multi_sig():
     return {"output": output}
 
 
-@keytool_blueprint.route("/generate", methods=["POST"])
+@app.route("/keytool/generate", methods=["POST"])
 def generate():
-    data = request.get_json()
+    data = request.POST_json()
     dto = KeytoolGenerateDTO(**data)
     command = ["keytool", "generate", dto.key_scheme]
     if dto.derivation_path:
@@ -854,9 +851,9 @@ def generate():
     return {"output": output}
 
 
-@keytool_blueprint.route("/import", methods=["POST"])
+@app.route("/keytool/import", methods=["POST"])
 def import_key():
-    data = request.get_json()
+    data = request.POST_json()
     dto = KeytoolImportDTO(**data)
     command = ["keytool", "import", dto.input_string, dto.key_scheme]
     if dto.derivation_path:
@@ -867,33 +864,33 @@ def import_key():
     return {"output": output}
 
 
-@keytool_blueprint.route("/export", methods=["POST"])
+@app.route("/keytool/export", methods=["POST"])
 def export():
-    data = request.get_json()
+    data = request.POST_json()
     dto = KeytoolExportDTO(**data)
     command = ["keytool", "export", "--key-identity", dto.key_identity]
     output = sui_command(command)
     return {"output": output}
 
 
-@keytool_blueprint.route("/list", methods=["GET"])
+@app.route("/keytool/list", methods=["POST"])
 def list_keys():
     command = ["keytool", "list"]
     output = sui_command(command)
     return {"output": output}
 
 
-@keytool_blueprint.route("/load-keypair", methods=["POST"])
+@app.route("/keytool/load-keypair", methods=["POST"])
 def load_keypair():
-    data = request.get_json()
+    data = request.POST_json()
     dto = KeytoolLoadKeypairDTO(**data)
     command = ["keytool", "load-keypair", dto.file]
     output = sui_command(command)
     return {"output": output}
 
 
-@info_blueprint.route("/types", methods=["GET"])
-def get_types():
+@app.route("/command/types", methods=["POST"])
+def POST_types():
     type_string = TypeDTO(name="string", is_array=False, is_choice=False)
     type_float = TypeDTO(name="float", is_array=False, is_choice=False)
     type_int = TypeDTO(name="int", is_array=False, is_choice=False)
@@ -920,27 +917,29 @@ def get_types():
     )
 
 
-@info_blueprint.route("/", methods=["GET"])
-def get_info():
+@app.route("/command/all", methods=["POST"])
+def POST_info():
     file = open("all.json", "r")
     data = file.read()
     file.close()
     return data
 
-@info_blueprint.route("/", methods=["POST"])
-def get_specific_info():
+
+@app.route("/command", methods=["POST"])
+def POST_specific_info():
     paths = request.json["paths"]
     file = open("all.json", "r")
     data = json.loads(file.read())
     for path in paths:
         data = data[path]
-    return data
+    response = jsonify(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
-app.register_blueprint(client_blueprint, url_prefix="/client")
-app.register_blueprint(keytool_blueprint, url_prefix="/keytool")
-app.register_blueprint(start_blueprint, url_prefix="/start")
-app.register_blueprint(info_blueprint, url_prefix="/info")
+
+cors = CORS(app, resource={r"/*": {"origins": "*"}})
+app.config["CORS_HEADERS"] = "Content-Type"
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
-

@@ -30,6 +30,10 @@ export default function Router() {
                         {
                             path: '/',
                             element: <DashboardPage />
+                        },
+                        {
+                            path: ':parentCommand/:childCommand',
+                            element: <CommandExecutionPage />
                         }
                     ]
                 }
@@ -39,3 +43,4 @@ export default function Router() {
 }
 
 const DashboardPage = Loadable(lazy(() => import('../pages/DashboardPage')));
+const CommandExecutionPage = Loadable(lazy(() => import('../pages/CommandExecutionPage')));

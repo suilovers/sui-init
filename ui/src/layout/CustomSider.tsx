@@ -1,21 +1,16 @@
-import RadioButtonCheckedRoundedIcon from '@mui/icons-material/RadioButtonCheckedRounded';
-import { ListItemIcon } from '@mui/material';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
+import CustomSiderDropdownButton from './CustomSiderDropdownButton';
 import { useLoadCommands } from './hooks/useLoadCommands';
 
 const drawerWidth = 240;
 
 export default function CustomSider() {
-    const { status, commands } = useLoadCommands();
-
+    const { commands } = useLoadCommands();
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -35,16 +30,15 @@ export default function CustomSider() {
                     <h2>SUI Dashboard</h2>
                 </Toolbar>
                 <Divider />
-                <List>
+
+                <List
+                    component="nav"
+                    sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                    // always open
+                    aria-labelledby="nested-list-subheader"
+                >
                     {commands.map((command) => (
-                        <ListItem key={command.name} button>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <RadioButtonCheckedRoundedIcon />
-                                </ListItemIcon>
-                                <ListItemText primary={command.name} />
-                            </ListItemButton>
-                        </ListItem>
+                        <CustomSiderDropdownButton key={command.name} command={command} />
                     ))}
                 </List>
             </Drawer>

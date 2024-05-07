@@ -22,4 +22,5 @@ export interface CommandDTO {
     name: string;
     optionalArguments: OptionalArgument[];
     path: string;
+    childs: CommandDTO[];
 }
