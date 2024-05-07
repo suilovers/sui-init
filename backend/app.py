@@ -784,7 +784,7 @@ def client_private():
 @app.route("/keytool/update-alias", methods=["POST"])
 def update_alias():
     try:
-        data = request.POST_json()
+        data = request.get_json()
         dto = KeytoolUpdateAliasDTO(**data)
     except:
         return jsonify({"error": "old_alias is required"}), 400
@@ -800,7 +800,7 @@ def update_alias():
 @app.route("/keytool/convert", methods=["POST"])
 def convert():
     try:
-        data = request.POST_json()
+        data = request.get_json()
         dto = KeytoolConvertDTO(**data)
     except:
         return jsonify({"error": "value is required"}), 400
@@ -814,7 +814,7 @@ def convert():
 
 @app.route("/keytool/decode-or-verify-tx", methods=["POST"])
 def decode_or_verify_tx():
-    data = request.POST_json()
+    data = request.get_json()
     dto = KeytoolDecodeOrVerifyTxDTO(**data)
     command = ["keytool", "decode-or-verify-tx", "--tx-bytes", dto.tx_bytes]
     if dto.sig:
@@ -827,7 +827,7 @@ def decode_or_verify_tx():
 
 @app.route("/keytool/decode-multi-sig", methods=["POST"])
 def decode_multi_sig():
-    data = request.POST_json()
+    data = request.get_json()
     dto = KeytoolDecodeMultiSigDTO(**data)
     command = ["keytool", "decode-multi-sig", "--multisig", dto.multisig]
     if dto.tx_bytes:
@@ -840,7 +840,7 @@ def decode_multi_sig():
 
 @app.route("/keytool/generate", methods=["POST"])
 def generate():
-    data = request.POST_json()
+    data = request.get_json()
     dto = KeytoolGenerateDTO(**data)
     command = ["keytool", "generate", dto.key_scheme]
     if dto.derivation_path:
@@ -853,7 +853,7 @@ def generate():
 
 @app.route("/keytool/import", methods=["POST"])
 def import_key():
-    data = request.POST_json()
+    data = request.get_json()
     dto = KeytoolImportDTO(**data)
     command = ["keytool", "import", dto.input_string, dto.key_scheme]
     if dto.derivation_path:
@@ -866,7 +866,7 @@ def import_key():
 
 @app.route("/keytool/export", methods=["POST"])
 def export():
-    data = request.POST_json()
+    data = request.get_json()
     dto = KeytoolExportDTO(**data)
     command = ["keytool", "export", "--key-identity", dto.key_identity]
     output = sui_command(command)
@@ -882,7 +882,7 @@ def list_keys():
 
 @app.route("/keytool/load-keypair", methods=["POST"])
 def load_keypair():
-    data = request.POST_json()
+    data = request.get_json()
     dto = KeytoolLoadKeypairDTO(**data)
     command = ["keytool", "load-keypair", dto.file]
     output = sui_command(command)
@@ -890,7 +890,7 @@ def load_keypair():
 
 
 @app.route("/command/types", methods=["POST"])
-def POST_types():
+def get_types():
     type_string = TypeDTO(name="string", is_array=False, is_choice=False)
     type_float = TypeDTO(name="float", is_array=False, is_choice=False)
     type_int = TypeDTO(name="int", is_array=False, is_choice=False)
@@ -918,7 +918,7 @@ def POST_types():
 
 
 @app.route("/command/all", methods=["POST"])
-def POST_info():
+def get_info():
     file = open("all.json", "r")
     data = file.read()
     file.close()
@@ -926,20 +926,17 @@ def POST_info():
 
 
 @app.route("/command", methods=["POST"])
-def POST_specific_info():
+def get_specific_info():
     paths = request.json["paths"]
     file = open("all.json", "r")
     data = json.loads(file.read())
     for path in paths:
         data = data[path]
-    response = jsonify(data)
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    return data
 
 
 cors = CORS(app, resource={r"/*": {"origins": "*"}})
 app.config["CORS_HEADERS"] = "Content-Type"
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
