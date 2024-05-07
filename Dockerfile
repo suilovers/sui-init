@@ -53,6 +53,8 @@ COPY init.sh init.sh
 COPY expect.sh expect.sh
 RUN chmod +x init.sh
 RUN dos2unix init.sh
+RUN chmod +x expect.sh
+RUN dos2unix expect.sh
 # CMD ["/bin/sh","./init.sh"]
 ENTRYPOINT ["/bin/sh","./init.sh"]
 # CMD ["ls"]
