@@ -1,3 +1,4 @@
+import json
 import subprocess
 from flask import Blueprint, Flask, request, jsonify
 
@@ -921,12 +922,20 @@ def get_types():
 
 @info_blueprint.route("/", methods=["GET"])
 def get_info():
-    # read all info from all.json
     file = open("all.json", "r")
     data = file.read()
     file.close()
     return data
 
+@info_blueprint.route("/", methods=["POST"])
+def get_specific_info():
+    paths = request.json["paths"]
+    file = open("all.json", "r")
+    data = json.loads(file.read())
+    for path in paths:
+        data = data[path]
+    return data
+    
 app.register_blueprint(client_blueprint, url_prefix="/client")
 app.register_blueprint(keytool_blueprint, url_prefix="/keytool")
 app.register_blueprint(start_blueprint, url_prefix="/start")
