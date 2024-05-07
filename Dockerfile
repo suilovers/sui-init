@@ -17,6 +17,14 @@ RUN brew install node
 RUN brew install yarn
 RUN brew install sui
 
+# Install Rust and Cargo
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+## Add Cargo to PATH
+ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
+RUN cargo --version
+RUN rustup default stable
+
+
 WORKDIR /app
 
 RUN python3 --version

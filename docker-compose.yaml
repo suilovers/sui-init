@@ -9,6 +9,8 @@ services:
     ports:
       - 8080:8080
       - 3000:3000
+      - 9123:9123
+      - 9000:9000
     volumes:
       - ./backend:/app/backend
       - ./ui:/app/ui
