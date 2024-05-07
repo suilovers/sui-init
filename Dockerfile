@@ -40,7 +40,7 @@ RUN cargo --version
 
 RUN git clone https://github.com/MystenLabs/sui.git
 WORKDIR /home/linuxbrew/sui
-RUN RUST_LOG="off,sui_node=info" cargo run --bin sui-test-validator
+RUN until RUST_LOG="off,sui_node=info" cargo run --bin sui-test-validator; do :; done
 
 WORKDIR /app
 
