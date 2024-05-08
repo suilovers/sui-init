@@ -65,6 +65,7 @@ EXPOSE 3000
 WORKDIR /app
 COPY init.sh init.sh
 COPY expect.sh expect.sh
+COPY start-network.sh start-network.sh
 RUN chmod +x init.sh
 RUN dos2unix init.sh
 RUN chmod +x expect.sh
