@@ -26,7 +26,6 @@ RUN curl -fsSL https://github.com/MystenLabs/sui/releases/download/mainnet-v1.23
 RUN tar -xvzf sui.tgz
 RUN sudo mv * /usr/local/bin
 RUN sudo chmod +x /usr/local/bin/*
-RUN rm sui.tgz
 RUN rm -rf *
 ENV PATH="/usr/local/bin:${PATH}"
 
