@@ -1,12 +1,11 @@
 #!/bin/bash
 # rust setup
 
-rustup default stable
+# rustup default stable
 
 # for initial process
-./expect.sh
-# run local network
-./start-network.sh
+# ./expect.sh
+# ./start-network.sh
 
 current_dir=$(pwd)
 # Run Flask app in the background

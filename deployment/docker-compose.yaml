@@ -1,0 +1,23 @@
+version: '3'
+services:
+  network:
+    build:
+      context: .
+      dockerfile: network.Dockerfile
+    platform: linux/amd64
+    container_name: network
+    ports:
+      - 9123:9123
+      - 9000:9000
+  # client:
+  #   build:
+  #     context: .
+  #     dockerfile: client.Dockerfile
+  #   platform: linux/amd64
+  #   container_name: sui
+  #   ports:
+  #     - 8080:8080
+  #     - 3000:3000
+  #   # volumes:
+  #   #   - ./backend:/app/backend
+  #   #   - ./ui:/app/ui
