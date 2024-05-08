@@ -29,7 +29,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./deployment
-          file: network.Dockerfile
+          context: .
+          file: ./deployment/network.Dockerfile
           push: true
           tags: abodur/sui-init:${{ github.sha }}, abodur/sui-init:latest
