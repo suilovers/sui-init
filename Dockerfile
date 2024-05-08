@@ -24,10 +24,8 @@ WORKDIR /home/linuxbrew
 
 RUN curl -fsSL https://github.com/MystenLabs/sui/releases/download/mainnet-v1.23.1/sui-mainnet-v1.23.1-ubuntu-x86_64.tgz -o sui.tgz
 RUN tar -xvzf sui.tgz
-RUN sudo mv sui /usr/local/bin/sui
-RUN sudo mv sui-test-validator /usr/local/bin/sui-test-validator
-RUN sudo chmod +x /usr/local/bin/sui
-RUN sudo chmod +x /usr/local/bin/sui-test-validator
+RUN sudo mv * /usr/local/bin
+RUN sudo chmod +x /usr/local/bin/*
 RUN rm sui.tgz
 RUN rm -rf *
 ENV PATH="/usr/local/bin:${PATH}"
@@ -38,9 +36,8 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
 RUN cargo --version
 
-RUN git clone https://github.com/MystenLabs/sui.git
-WORKDIR /home/linuxbrew/sui
-RUN until RUST_LOG="off,sui_node=info" cargo run --bin sui-test-validator; do :; done
+# location /home/linuxbrew/sui
+# RUN git clone https://github.com/MystenLabs/sui.git
 
 WORKDIR /app
 
@@ -73,6 +70,8 @@ RUN chmod +x init.sh
 RUN dos2unix init.sh
 RUN chmod +x expect.sh
 RUN dos2unix expect.sh
+RUN chmod +x start-network.sh
+RUN dos2unix start-network.sh
 # CMD ["/bin/sh","./init.sh"]
 ENTRYPOINT ["/bin/sh","./init.sh"]
 # CMD ["ls"]

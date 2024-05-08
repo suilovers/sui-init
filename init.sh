@@ -4,8 +4,9 @@
 rustup default stable
 
 # for initial process
-chmod +x expect.sh
 ./expect.sh
+# run local network
+./start-network.sh
 
 current_dir=$(pwd)
 # Run Flask app in the background
