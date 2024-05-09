@@ -2,8 +2,8 @@ version: '3'
 services:
   network:
     build:
-      context: .
-      dockerfile: network.Dockerfile
+      context: ..
+      dockerfile: ./deployment/network.Dockerfile
     platform: linux/amd64
     container_name: network
     ports:

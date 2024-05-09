@@ -13,14 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-RUN curl -k -fsSL https://github.com/MystenLabs/sui/releases/download/mainnet-v1.23.1/sui-mainnet-v1.23.1-ubuntu-x86_64.tgz -o sui.tgz
-RUN tar -xvzf sui.tgz
-RUN sudo mv sui /usr/local/bin/sui
-RUN sudo mv sui-faucet /usr/local/bin/sui-faucet
-RUN sudo chmod +x /usr/local/bin/*
-RUN rm -rf sui.tgz
-ENV PATH="/usr/local/bin:${PATH}"
-
 # Install Rust and Cargo
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ## Add Cargo to PATH

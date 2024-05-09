@@ -1,14 +1,31 @@
 # Use the official Rust image as the base image
-FROM rust:latest
+FROM ubuntu:20.04
 
 RUN apt-get update && apt-get install -y \ 
-    libclang-dev
+    curl \
+    sudo \
+    libpq-dev \
+    libssl-dev \
+    libclang-dev \
+    build-essential \
+    cmake \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
 WORKDIR /app
-RUN git clone https://github.com/MystenLabs/sui.git
-WORKDIR /app/sui
-RUN RUST_LOG="off,sui_node=info" cargo run --bin sui-test-validator
+RUN curl -k -fsSL https://github.com/MystenLabs/sui/releases/download/mainnet-v1.24.1/sui-mainnet-v1.24.1-ubuntu-x86_64.tgz -o sui.tgz
+RUN tar -xvzf sui.tgz
+RUN sudo mv sui /usr/local/bin/sui
+RUN sudo mv sui-test-validator /usr/local/bin/sui-test-validator
+RUN sudo chmod +x /usr/local/bin/*
+RUN rm -rf sui.tgz
+ENV PATH="/usr/local/bin:${PATH}"
 
+# ADD ./config/network.yaml /root/.sui/sui-config/network.yaml
+ADD ./scripts/start-network.sh /app/start-network.sh
+ADD ./sui_config /root/.sui/sui_config
+RUN chmod +x /app/start-network.sh
+RUN sui genesis -f --with-faucet
 # run forever
-CMD ["tail", "-f", "/dev/null"]
+CMD ["/bin/sh","/app/start-network.sh"]
