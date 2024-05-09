@@ -35,7 +35,10 @@ jobs:
           tags: abodur/sui-init:${{ github.sha }}, abodur/sui-init:latest
   test:
     needs: build-and-push
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Delete huge unnecessary tools folder
         run: rm -rf /opt/hostedtoolcache
