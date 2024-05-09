@@ -8,7 +8,6 @@ You can run Dockerfile to run the project. It will create a container with the p
 - Node
 - Flask
 - SUI
-
 ### How to Run ? 
 
 1. Install Docker and Docker Compose

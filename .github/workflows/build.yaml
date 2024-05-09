@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Delete huge unnecessary tools folder
@@ -33,3 +33,17 @@ jobs:
           file: ./deployment/network.Dockerfile
           push: true
           tags: abodur/sui-init:${{ github.sha }}, abodur/sui-init:latest
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker run
+        working-directory: deployment
+        run: docker-compose up -d --build
+      - name: Print the logs
+        working-directory: deployment
+        run: docker-compose logs
