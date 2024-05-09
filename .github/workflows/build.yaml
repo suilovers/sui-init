@@ -47,4 +47,5 @@ jobs:
         run: docker-compose up -d --build
       - name: Print the logs
         working-directory: deployment
-        run: docker-compose logs
+        # get logs for 30 seconds
+        run: sleep 30 && docker-compose logs
