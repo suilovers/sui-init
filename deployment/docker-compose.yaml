@@ -1,9 +1,7 @@
 version: '3'
 services:
   network:
-    build:
-      context: ..
-      dockerfile: ./deployment/network.Dockerfile
+    image: abodur/sui-init:latest
     platform: linux/amd64
     container_name: network
     ports:

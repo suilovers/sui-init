@@ -26,7 +26,6 @@ ENV PATH="/usr/local/bin:${PATH}"
 
 # ADD ./config/network.yaml /root/.sui/sui-config/network.yaml
 ADD ./scripts/start-network.sh /app/start-network.sh
-ADD ./sui_config /root/.sui/sui_config
 RUN chmod +x /app/start-network.sh
 RUN sui genesis -f --with-faucet
 # run forever
