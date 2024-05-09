@@ -34,6 +34,7 @@ jobs:
           push: true
           tags: abodur/sui-init:${{ github.sha }}, abodur/sui-init:latest
   test:
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Delete huge unnecessary tools folder
