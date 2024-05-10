@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         component: ['network', 'ui', 'backend']
-    runs-on: ubuntu
+    runs-on: [ubuntu-20.04]
     steps:
       - name: Delete huge unnecessary tools folder
         run: rm -rf /opt/hostedtoolcache
