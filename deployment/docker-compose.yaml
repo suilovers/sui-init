@@ -7,15 +7,19 @@ services:
     ports:
       - 9123:9123
       - 9000:9000
-  # client:
-  #   build:
-  #     context: .
-  #     dockerfile: client.Dockerfile
-  #   platform: linux/amd64
-  #   container_name: sui
-  #   ports:
-  #     - 8080:8080
-  #     - 3000:3000
-  #   # volumes:
-  #   #   - ./backend:/app/backend
-  #   #   - ./ui:/app/ui
+  ui:
+    image: abodur/sui-ui:latest
+    platform: linux/amd64
+    container_name: ui
+    ports:
+      - 80:80
+    depends_on:
+      - network
+  api:
+    image: abodur/sui-api:latest
+    platform: linux/amd64
+    container_name: api
+    ports:
+      - 5000:5000
+    depends_on:
+      - network
