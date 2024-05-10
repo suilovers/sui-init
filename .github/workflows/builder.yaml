@@ -72,13 +72,17 @@ jobs:
       - name: Install Docker Compose
         run: |
           brew install docker-compose
+      - name: Start Docker
+        run: |
+          open --background -a Docker
+          while ! docker system info > /dev/null 2>&1; do sleep 1; done
       - name: Docker run
         working-directory: deployment
         run: docker-compose up -d --build
       - name: Print the logs
         working-directory: deployment
         run: sleep 30 && docker-compose logs
-        
+
   test-on-windows:
     needs: build-and-push
     runs-on: windows-latest
