@@ -1,9 +1,10 @@
 ## build args
 FROM node:16-alpine as build-deps
-WORKDIR /usr/src/app
-COPY package.json yarn.lock ./
+WORKDIR /app
+COPY ./ui/package.json /app
+COPY ./ui/yarn.lock /app
 RUN yarn install
-COPY . ./
+COPY ./ui /app
 # cat .env.production
 RUN yarn build
 
@@ -11,12 +12,9 @@ RUN yarn build
 FROM nginx:1.19-alpine
 
 WORKDIR /usr/share/nginx/html
-COPY ./env.sh .
-COPY .env .
 RUN apk add --no-cache bash
-RUN chmod +x env.sh
 
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build-deps /usr/src/app/build .
+COPY --from=build-deps /app/build .
 EXPOSE 80
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
