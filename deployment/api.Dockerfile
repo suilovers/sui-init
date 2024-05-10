@@ -8,7 +8,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./backend/requirements.txt /app
-RUN pip install -r requirements.txt
+
+# Install backend dependencies
+RUN python3 -m venv /app/venv
+RUN . /app/venv/bin/activate
+RUN /app/venv/bin/pip3 install -r /app/requirements.txt
+
 COPY ./backend /app
 EXPOSE 5000
 ADD ./scripts/expect.sh /app/expect.sh
