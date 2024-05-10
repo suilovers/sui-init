@@ -74,4 +74,3 @@ RUN chmod +x start-network.sh
 RUN dos2unix start-network.sh
 # CMD ["/bin/sh","./init.sh"]
 ENTRYPOINT ["/bin/sh","./init.sh"]
-# CMD ["ls"]
