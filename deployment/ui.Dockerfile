@@ -17,4 +17,4 @@ RUN apk add --no-cache bash
 COPY ./ui/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build-deps /app/build .
 EXPOSE 80
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
+CMD ["nginx -g \"daemon off;\""]
