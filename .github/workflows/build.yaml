@@ -42,7 +42,7 @@ jobs:
     strategy:
       matrix:
         component: ['network', 'ui', 'backend']
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Delete huge unnecessary tools folder
