@@ -43,7 +43,7 @@ jobs:
           context: .
           file: ./deployment/${{ inputs.component }}.Dockerfile
           push: true
-          tags: abodur/sui-${{ inputs.component }}:${{ github.sha }}, abodur/sui-${{ matrix.component }}:latest
+          tags: abodur/sui-${{ inputs.component }}:${{ github.sha }}, abodur/sui-${{ inputs.component }}:latest
 
   test:
     needs: build-and-push
