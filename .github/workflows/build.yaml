@@ -6,6 +6,9 @@ on:
 
 jobs:
   build-and-push:
+    strategy:
+      matrix:
+        component: ['network', 'ui', 'backend']
     runs-on: ubuntu
     steps:
       - name: Delete huge unnecessary tools folder
@@ -30,15 +33,17 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./deployment/network.Dockerfile
+          file: ./deployment/${{ matrix.component }}.Dockerfile
           push: true
-          tags: abodur/sui-init:${{ github.sha }}, abodur/sui-init:latest
+          tags: abodur/sui-${{ matrix.component }}:${{ github.sha }}, abodur/sui-${{ matrix.component }}:latest
+
   test:
     needs: build-and-push
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        component: ['network', 'ui', 'backend']
         os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Delete huge unnecessary tools folder
         run: rm -rf /opt/hostedtoolcache
