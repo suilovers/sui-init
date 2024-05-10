@@ -8,8 +8,8 @@ jobs:
   build-and-push:
     strategy:
       matrix:
-        component: ['network', 'ui', 'backend']
-    runs-on: [ubuntu-20.04]
+        component: ['network', 'ui', 'api']
+    runs-on: ubuntu-20.04
     steps:
       - name: Delete huge unnecessary tools folder
         run: rm -rf /opt/hostedtoolcache
@@ -41,8 +41,8 @@ jobs:
     needs: build-and-push
     strategy:
       matrix:
-        component: ['network', 'ui', 'backend']
-        os: [ubuntu-20.04]
+        component: ['network', 'ui', 'api']
+        os: [ubuntu-20.04, windows-latest, macos-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Delete huge unnecessary tools folder
