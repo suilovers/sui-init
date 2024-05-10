@@ -1,9 +1,13 @@
 FROM ubuntu:20.04
+ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 # install sudo
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     dos2unix \
+    python3 \
+    python3-venv \
+    python3-pip \
     expect \
     && rm -rf /var/lib/apt/lists/*
 

@@ -52,8 +52,6 @@ jobs:
         os: [ubuntu-20.04, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Delete huge unnecessary tools folder
-        run: rm -rf /opt/hostedtoolcache
       # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v4
