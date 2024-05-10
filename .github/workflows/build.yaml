@@ -1,5 +1,4 @@
-name: Build Docker Image
-
+name: Build Docker Images for components [UI, API, Network]
 on:
   push:
   workflow_dispatch:

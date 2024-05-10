@@ -1,4 +1,4 @@
-name: Build Docker Image
+name: Docker Builder
 
 on:
   workflow_call:
