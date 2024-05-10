@@ -45,14 +45,28 @@ jobs:
           push: true
           tags: abodur/sui-${{ inputs.component }}:${{ github.sha }}, abodur/sui-${{ inputs.component }}:latest
 
-  test:
+  test-on-ubuntu:
+    name: Test on Ubuntu
     needs: build-and-push
-    strategy:
-      matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v4
+      # Check docker-compose is installed
+      - name: Docker run
+        working-directory: deployment
+        run: docker-compose up -d --build
+      - name: Print the logs
+        working-directory: deployment
+        # get logs for 30 seconds
+        run: sleep 30 && docker-compose logs
+
+  test-on-macos:
+    name: Test on macOS
+    needs: build-and-push
+    runs-on: macos-latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Docker run
@@ -60,5 +74,18 @@ jobs:
         run: docker-compose up -d --build
       - name: Print the logs
         working-directory: deployment
-        # get logs for 30 seconds
+        run: sleep 30 && docker-compose logs
+
+  test-on-windows:
+    name: Test on Windows
+    needs: build-and-push
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker run
+        working-directory: deployment
+        run: docker-compose up -d --build
+      - name: Print the logs
+        working-directory: deployment
         run: sleep 30 && docker-compose logs
