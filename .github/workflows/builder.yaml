@@ -7,6 +7,13 @@ on:
         required: true
         type: string
         description: 'The component to build'
+    secrets:
+      DOCKERHUB_USERNAME:
+        description: 'Docker Hub username'
+        required: true
+      DOCKERHUB_TOKEN:
+        description: 'Docker Hub token'
+        required: true
 
 
 jobs:

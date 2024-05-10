@@ -8,11 +8,14 @@ jobs:
     uses: ./.github/workflows/builder.yaml
     with:
       component: ui
+    secrets: inherit
   api:
     uses: ./.github/workflows/builder.yaml
     with:
       component: api
+    secrets: inherit
   network:
     uses: ./.github/workflows/builder.yaml
     with:
       component: network
+    secrets: inherit
