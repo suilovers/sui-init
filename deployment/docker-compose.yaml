@@ -1,7 +1,7 @@
 version: '3'
 services:
   network:
-    image: abodur/sui-init:latest
+    image: abodur/sui-network:latest
     platform: linux/amd64
     container_name: network
     ports:
