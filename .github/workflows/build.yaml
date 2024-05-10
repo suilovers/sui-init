@@ -5,16 +5,19 @@ on:
 
 jobs:
   ui:
+    name: Build and push UI
     uses: ./.github/workflows/builder.yaml
     with:
       component: ui
     secrets: inherit
   api:
+    name: Build and push API
     uses: ./.github/workflows/builder.yaml
     with:
       component: api
     secrets: inherit
   network:
+    name: Build and push Network
     uses: ./.github/workflows/builder.yaml
     with:
       component: network

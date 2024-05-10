@@ -42,9 +42,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./deployment/${{ github.event.inputs.component }}.Dockerfile
+          file: ./deployment/${{ inputs.component }}.Dockerfile
           push: true
-          tags: abodur/sui-${{ github.event.inputs.component }}:${{ github.sha }}, abodur/sui-${{ matrix.component }}:latest
+          tags: abodur/sui-${{ inputs.component }}:${{ github.sha }}, abodur/sui-${{ matrix.component }}:latest
 
   test:
     needs: build-and-push
