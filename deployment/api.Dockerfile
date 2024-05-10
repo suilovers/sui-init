@@ -24,4 +24,9 @@ ADD ./scripts/expect.sh /app/expect.sh
 ADD ./scripts/init.sh /app/init.sh
 ENV FLASK_APP=app.py
 
+RUN dos2unix /app/expect.sh
+RUN dos2unix /app/init.sh
+RUN chmod +x /app/expect.sh
+RUN chmod +x /app/init.sh
+
 CMD ["/bin/sh","/app/init.sh"]

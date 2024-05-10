@@ -2,7 +2,7 @@ name: Build Docker Images for components [UI, API, Network]
 on:
   push:
   workflow_dispatch:
-
+    
 jobs:
   ui:
     name: Build and push UI
