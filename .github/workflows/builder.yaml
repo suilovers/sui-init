@@ -15,7 +15,6 @@ on:
         description: 'Docker Hub token'
         required: true
 
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -42,14 +41,15 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./deployment/${{ github.event.inputs.component }}.Dockerfile
+          file: ./deployment/${{ inputs.component }}.Dockerfile
           push: true
-          tags: abodur/sui-${{ github.event.inputs.component }}:${{ github.sha }}, abodur/sui-${{ github.event.inputs.component }}:latest
+          tags: abodur/sui-${{ inputs.component }}:${{ github.sha }}, abodur/sui-${{ matrix.component }}:latest
+
   test:
     needs: build-and-push
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-latest, macos-latest ]
+        os: [ubuntu-20.04, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Delete huge unnecessary tools folder
