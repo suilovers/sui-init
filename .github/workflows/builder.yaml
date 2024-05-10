@@ -69,23 +69,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Docker Compose
+        run: |
+          brew install docker-compose
       - name: Docker run
         working-directory: deployment
         run: docker-compose up -d --build
       - name: Print the logs
         working-directory: deployment
         run: sleep 30 && docker-compose logs
-
+        
   test-on-windows:
-    name: Test on Windows
     needs: build-and-push
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set Docker context to default
+        run: |
+          docker version
+          docker context use default
       - name: Docker run
         working-directory: deployment
         run: docker-compose up -d --build
       - name: Print the logs
         working-directory: deployment
-        run: sleep 30 && docker-compose logs
+        run: sleep
