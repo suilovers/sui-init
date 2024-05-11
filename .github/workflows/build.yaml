@@ -71,6 +71,9 @@ jobs:
       #       "method": "sui_getTotalTransactionBlocks",
       #       "params": []
       #     }'
+      
       - name: Connect to the network On api container
         run: |
+          docker exec network /bin/bash -c "grep "json-rpc-address:" /root/.sui/sui_config/fullnode.yaml"
           docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://network:9000"
+          
