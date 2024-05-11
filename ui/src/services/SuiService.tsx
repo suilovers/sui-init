@@ -40,5 +40,31 @@ export async function fetchCommand(parentCommand: string, childCommand: string) 
  */
 export async function fetchCall(path: string) {
     const response = await _axios.post(path);
-    return response.data;
+
+    if (response) {
+        return response.data;
+    }
+    return false;
+}
+
+export async function fetchCallWithArguments(path: string, argumentBodyNames: any, optionsBodyNames: any, argumentValues: any, optionValues: any) {
+    const body: any = {};
+
+    argumentBodyNames.forEach((key: any, index: any) => {
+        body[key] = argumentValues[index];
+    });
+
+    if (optionsBodyNames && optionValues) {
+        optionsBodyNames.forEach((key: any, index: any) => {
+            body[key] = optionValues[index];
+        });
+    }
+
+    const response = await _axios.post(path, body).catch((error) => {
+        console.log(error);
+    });
+    if (response) {
+        return response.data;
+    }
+    return false;
 }
