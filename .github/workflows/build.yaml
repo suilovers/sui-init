@@ -56,7 +56,7 @@ jobs:
       # Check docker-compose is installed
       - name: Docker run
         working-directory: deployment
-        run: docker-compose up -d --build
+        run: cat docker-compose.yaml && docker-compose up -d --build
       - name: Print the logs
         working-directory: deployment
         # get logs for 30 seconds
