@@ -15,4 +15,4 @@ You can run Dockerfile to run the project. It will create a container with the p
     ```bash
     docker-compose up -d --build
     ```
-3. Open the browser and go to `http://localhost:3000`
+3. Open the browser and go to `http://localhost:3000` 
