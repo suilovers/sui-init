@@ -73,4 +73,4 @@ jobs:
       #     }'
       - name: Connect to the network On api container
         run: |
-          docker exec -it api /bin/bash -c "sui client new-env --alias local --rpc http://network:9000"
+          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://10.0.0.11:9000"

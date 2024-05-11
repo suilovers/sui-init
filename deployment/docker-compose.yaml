@@ -1,9 +1,13 @@
 version: '3'
 services:
   network:
+    networks:
+      sui-network:
+        ipv4_address: 10.0.0.11
     image: abodur/sui-network:d64cc1a68a3d5faeadf973a30e45b7c70ed70f73
     platform: linux/amd64
     container_name: network
+    hostname: network
     ports:
       - 9123:9123
       - 9000:9000
@@ -11,14 +15,19 @@ services:
     image: abodur/sui-ui:d64cc1a68a3d5faeadf973a30e45b7c70ed70f73
     platform: linux/amd64
     container_name: ui
+    hostname: ui
     ports:
       - 8080:80
     depends_on:
       - network
   api:
+    networks:
+      sui-network:
+        ipv4_address: 10.0.0.12
     image: abodur/sui-api:d64cc1a68a3d5faeadf973a30e45b7c70ed70f73
     platform: linux/amd64
     container_name: api
+    hostname: api
     ports:
       - 7777:7777
     depends_on:
