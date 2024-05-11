@@ -44,10 +44,7 @@ jobs:
 
   test:
     name: Test on Ubuntu
-    needs: 
-      - ui
-      - api
-      - network
+    needs: update-docker-compose
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository
