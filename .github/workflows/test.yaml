@@ -1,0 +1,36 @@
+name: SUI TEST
+on:
+  push:
+  workflow_dispatch:
+    
+jobs:
+  test:
+    name: Test on Ubuntu
+    needs: update-docker-compose
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: actions/checkout@v4
+      # Check docker-compose is installed
+      - name: Docker run
+        working-directory: deployment/sui-network
+        run: docker-compose up -d --build
+      - name: Print the logs
+        working-directory: deployment/sui-network
+        # get logs for 30 seconds
+        run: sleep 30 && docker-compose logs
+      # - name: Test RPC API on api container
+      #   run: |
+      #     curl --location --request POST 'http://127.0.0.1:9000' \
+      #     --header 'Content-Type: application/json' \
+      #     --data-raw '{
+      #       "jsonrpc": "2.0",
+      #       "id": 1,
+      #       "method": "sui_getTotalTransactionBlocks",
+      #       "params": []
+      #     }'
+      - name: Connect to the network On api container
+        run: |
+          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://10.0.0.12:9000"
+          
