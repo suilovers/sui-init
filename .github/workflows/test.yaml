@@ -6,7 +6,6 @@ on:
 jobs:
   test:
     name: Test on Ubuntu
-    needs: update-docker-compose
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository
