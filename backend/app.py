@@ -1,8 +1,8 @@
 import json
 import subprocess
-from flask import Blueprint, Flask, request, jsonify
+from flask import Flask, request, jsonify
 
-from flask_cors import cross_origin, CORS
+from flask_cors import  CORS
 from pydantic import ValidationError
 from dto import (
     ClientBalanceDTO,

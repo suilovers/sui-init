@@ -17,9 +17,10 @@ export function useDirectCall(isDirectCall: boolean, path: string | undefined) {
                 setStatus(CallStatus.ERROR);
             }
         }
-
         if (isDirectCall && path) {
             directCall();
+        } else {
+            setStatus(CallStatus.LOADING);
         }
     }, [isDirectCall, path]);
 

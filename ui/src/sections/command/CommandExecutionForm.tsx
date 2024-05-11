@@ -1,10 +1,8 @@
-import { Alert, Button, FormControl, FormHelperText, TextField, Theme, Typography } from '@mui/material';
+import { Alert, Button, FormControl, FormHelperText, Snackbar, TextField, Theme, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { CommandDTO } from '../../types/sui/response';
-import { useSubmitCall } from './hooks/useSubmitCall';
-import { fetchCall, fetchCallWithArguments } from '../../services/SuiService';
-import { Snackbar } from '@mui/material';
 import { useState } from 'react';
+import { fetchCallWithArguments } from '../../services/SuiService';
+import { CommandDTO } from '../../types/sui/response';
 
 interface CommandExecutionFormProps {
     command: CommandDTO | null;
@@ -12,6 +10,7 @@ interface CommandExecutionFormProps {
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
+    root: {},
     formControl: {
         margin: theme.spacing(1),
         padding: theme.spacing(1),
@@ -22,12 +21,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     formButton: {
         padding: theme.spacing(1),
-        margin: theme.spacing(2),
-
+        margin: theme.spacing(2)
     }
 }));
-
-
 
 export default function CommandExecutionForm({ command, onSubmit }: CommandExecutionFormProps) {
     const [snackbarOpen, setOpen] = useState(false);
@@ -65,30 +61,20 @@ export default function CommandExecutionForm({ command, onSubmit }: CommandExecu
             console.log(isReturned);
             if (!isReturned) {
                 setOpen(true);
-            }
-            else {
+            } else {
                 setOpen(false);
             }
-
         }
     };
 
     const classes = useStyles();
     return (
-        <div>
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={6000}
-                onClose={handleClose}>
-                <Alert
-                    onClose={handleClose}
-                    severity="error"
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
+        <div className={classes.root}>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error" variant="filled" sx={{ width: '100%' }}>
                     Failed to send the command. Please check the arguments and try again.
-                </Alert></Snackbar>
-
+                </Alert>
+            </Snackbar>
 
             <form onSubmit={onSubmit}>
                 <Typography variant="h6" component="div" className={classes.formGroupTitle}>
@@ -110,9 +96,10 @@ export default function CommandExecutionForm({ command, onSubmit }: CommandExecu
                         <FormHelperText id="my-helper-text">{option.description}</FormHelperText>
                     </FormControl>
                 ))}
-                <Button fullWidth onClick={handleClick} className={classes.formButton} variant="contained">Send</Button>
+                <Button fullWidth onClick={handleClick} className={classes.formButton} variant="contained">
+                    Send
+                </Button>
             </form>
         </div>
-
     );
 }

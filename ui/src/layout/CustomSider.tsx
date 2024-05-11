@@ -4,6 +4,7 @@ import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
+import CustomAppBar from './CustomAppBar';
 import CustomSiderDropdownButton from './CustomSiderDropdownButton';
 import { useLoadCommands } from './hooks/useLoadCommands';
 
@@ -14,6 +15,7 @@ export default function CustomSider() {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
+            <CustomAppBar />
             <Drawer
                 sx={{
                     width: drawerWidth,

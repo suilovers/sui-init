@@ -9,7 +9,7 @@ const useStyles = makeStyles({
         alignItems: 'center !important',
         marginLeft: '240px',
         width: 'calc(100% - 240px)',
-        height: '100vh'
+        height: 'max-content',
     }
 });
 

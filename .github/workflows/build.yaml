@@ -25,8 +25,6 @@ jobs:
     secrets: inherit
 
   update-docker-compose:
-    permissions:
-      contents: write
     name: Update Docker Compose
     needs: [ui, api, network]
     runs-on: ubuntu-latest
@@ -62,4 +60,17 @@ jobs:
       - name: Print the logs
         working-directory: deployment
         # get logs for 30 seconds
-        run: sleep 30 && docker-compose logs
+        run: sleep 10 && docker-compose logs
+      - name: Test RPC API on api container
+        run: |
+          curl --location --request POST 'http://127.0.0.1:9000' \
+          --header 'Content-Type: application/json' \
+          --data-raw '{
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "sui_getTotalTransactionBlocks",
+            "params": []
+          }'
+      - name: Connect to the network On api container
+        run: |
+          docker exec -it sui-api /bin/bash -c "sui client new-env --alias local --rpc http://127.0.0.1:9000"
