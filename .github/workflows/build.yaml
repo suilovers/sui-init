@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     
 jobs:
+
   ui:
     name: Build and push UI
     uses: ./.github/workflows/builder.yaml
@@ -24,6 +25,8 @@ jobs:
     secrets: inherit
 
   update-docker-compose:
+    permissions:
+      contents: write
     name: Update Docker Compose
     needs: [ui, api, network]
     runs-on: ubuntu-latest
