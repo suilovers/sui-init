@@ -63,7 +63,7 @@ jobs:
         run: sleep 30 && docker-compose logs
       # - name: Test RPC API on api container
       #   run: |
-      #     curl --location --request POST 'http://127.0.0.1:9000' \
+      #     curl --location --request POST 'http://127.0.0.1:7000' \
       #     --header 'Content-Type: application/json' \
       #     --data-raw '{
       #       "jsonrpc": "2.0",
@@ -73,4 +73,4 @@ jobs:
       #     }'
       - name: Connect to the network On api container
         run: |
-          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://network:9000"
+          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://network:7000"
