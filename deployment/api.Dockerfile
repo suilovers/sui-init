@@ -11,6 +11,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     expect \
     && rm -rf /var/lib/apt/lists/*
 
+RUN curl -fsSL https://github.com/MystenLabs/sui/releases/download/mainnet-v1.23.1/sui-mainnet-v1.23.1-ubuntu-x86_64.tgz -o sui.tgz
+RUN tar -xvzf sui.tgz
+RUN sudo mv * /usr/local/bin
+RUN sudo chmod +x /usr/local/bin/*
+RUN rm -rf *
+ENV PATH="/usr/local/bin:${PATH}"
+
 COPY ./backend/requirements.txt /app
 
 # Install backend dependencies

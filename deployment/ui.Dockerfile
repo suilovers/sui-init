@@ -6,7 +6,7 @@ COPY ./ui/yarn.lock /app
 RUN yarn install
 COPY ./ui /app
 # cat .env.production
-RUN yarn build
+RUN yarn bui
 
 ## production
 FROM nginx:1.19-alpine
