@@ -9,7 +9,4 @@ sui-test-validator \
     --graphql-port 8000 \
     --with-indexer \ 
 
-sui-node \
-    --config-path /root/.sui/sui_config/fullnode.yaml
-
 tail -f /dev/null
