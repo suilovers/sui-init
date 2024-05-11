@@ -60,7 +60,7 @@ jobs:
       - name: Print the logs
         working-directory: deployment
         # get logs for 30 seconds
-        run: sleep 10 && docker-compose logs
+        run: sleep 30 && docker-compose logs
       # - name: Test RPC API on api container
       #   run: |
       #     curl --location --request POST 'http://127.0.0.1:9000' \
