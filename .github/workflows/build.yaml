@@ -33,6 +33,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
       - name: Update Docker Compose
         working-directory: deployment
         run: |
