@@ -23,6 +23,25 @@ jobs:
       component: network
     secrets: inherit
 
+  update-docker-compose:
+    name: Update Docker Compose
+    needs: [ui, api, network]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Update Docker Compose
+        working-directory: deployment
+        run: |
+          sed -i 's/\(abodur\/sui-network:\).*/\1${{ github.sha }}/g' docker-compose.yaml
+          sed -i 's/\(abodur\/sui-ui:\).*/\1${{ github.sha }}/g' docker-compose.yaml
+          sed -i 's/\(abodur\/sui-api:\).*/\1${{ github.sha }}/g' docker-compose.yaml
+      - name: Commit new docker-compose.yaml
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "version: ${{ inputs.sha }} [skip ci]"
+          branch: ${{ github.ref }}
+
   test:
     name: Test on Ubuntu
     needs: 
