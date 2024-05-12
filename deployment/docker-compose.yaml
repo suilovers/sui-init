@@ -4,7 +4,7 @@ services:
     # networks:
     #   sui-network:
     #     ipv4_address: 10.0.0.11
-    image: abodur/sui-network:c472bfed79ee208bf992e6a2b512c9844b98401d
+    image: abodur/sui-network:e699d91c4f0548e9f5f0b1732d42089d1003c1ab
     platform: linux/amd64
     container_name: network
     hostname: network
@@ -12,7 +12,7 @@ services:
       - 9123:9123
       - 9000:9000
   ui:
-    image: abodur/sui-ui:c472bfed79ee208bf992e6a2b512c9844b98401d
+    image: abodur/sui-ui:e699d91c4f0548e9f5f0b1732d42089d1003c1ab
     platform: linux/amd64
     container_name: ui
     hostname: ui
@@ -24,7 +24,7 @@ services:
     # networks:
     #   sui-network:
     #     ipv4_address: 10.0.0.12
-    image: abodur/sui-api:c472bfed79ee208bf992e6a2b512c9844b98401d
+    image: abodur/sui-api:e699d91c4f0548e9f5f0b1732d42089d1003c1ab
     platform: linux/amd64
     container_name: api
     hostname: api
