@@ -71,5 +71,5 @@ jobs:
           path: ./sui_config
       - name: Connect to the network On api container
         run: |
-          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://fullnode:8000"
+          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://network:8000"
 
