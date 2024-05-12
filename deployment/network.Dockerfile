@@ -34,4 +34,4 @@ RUN rm /etc/nginx/sites-enabled/default
 ADD ./deployment/nginx/default.conf /etc/nginx/sites-enabled/
 EXPOSE 8000
 # run forever
-CMD ["nginx", "-g", "daemon off;", " && /bin/sh /app/start-network.sh"]
+CMD ["/bin/sh", "/app/start-network.sh"]
