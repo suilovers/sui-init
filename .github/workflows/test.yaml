@@ -22,7 +22,9 @@ jobs:
           cargo --version
       # install SUI
       - name: Install SUI
-        run: cargo install --git
+        run: |
+          git checkout releases/sui-v1.24.0-release
+          cargo build --bin sui
       # install stress
       - name: Install stress
         working-directory: docker/stress
