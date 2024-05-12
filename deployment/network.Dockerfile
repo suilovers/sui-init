@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     sed \
     cmake \
+    nginx \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
@@ -28,5 +29,9 @@ ENV PATH="/usr/local/bin:${PATH}"
 ADD ./scripts/start-network.sh /app/start-network.sh
 RUN chmod +x /app/start-network.sh
 RUN sui genesis -f --with-faucet
+# nginx
+RUN rm /etc/nginx/sites-enabled/default
+ADD default.conf /etc/nginx/sites-enabled/
+EXPOSE 8000
 # run forever
-CMD ["/bin/sh","/app/start-network.sh"]
+CMD ["nginx", "-g", "daemon off;", " && /bin/sh /app/start-network.sh"]

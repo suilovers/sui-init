@@ -10,7 +10,7 @@ services:
     hostname: network
     ports:
       - 9123:9123
-      - 9000:9000
+      - 8000:8000
   ui:
     image: abodur/sui-ui:e699d91c4f0548e9f5f0b1732d42089d1003c1ab
     platform: linux/amd64
