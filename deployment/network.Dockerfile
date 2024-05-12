@@ -29,5 +29,4 @@ ADD ./scripts/start-network.sh /app/start-network.sh
 RUN chmod +x /app/start-network.sh
 RUN sui genesis -f --with-faucet
 # run forever
-RUN sed -i 's/json-rpc-address: "0.0.0.0:9000"/json-rpc-address: "127.0.0.1:9000"/g' /root/.sui/sui_config/fullnode.yaml
 CMD ["/bin/sh","/app/start-network.sh"]
