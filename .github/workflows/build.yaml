@@ -69,6 +69,16 @@ jobs:
         with:
           name: sui_config
           path: ./sui_config
+      - name: Test RPC API on api container
+        run: |
+          curl --location --request POST 'http://127.0.0.1:8000' \
+          --header 'Content-Type: application/json' \
+          --data-raw '{
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "sui_getTotalTransactionBlocks",
+            "params": []
+          }'
       - name: Connect to the network On api container
         run: |
           docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://network:8000"
