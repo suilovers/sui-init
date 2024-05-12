@@ -4,80 +4,72 @@ on:
   workflow_dispatch:
     
 jobs:
-  dummy:
-    name: Dummy
+
+  ui:
+    name: Build and push UI
+    uses: ./.github/workflows/builder.yaml
+    with:
+      component: ui
+    secrets: inherit
+  api:
+    name: Build and push API
+    uses: ./.github/workflows/builder.yaml
+    with:
+      component: api
+    secrets: inherit
+  network:
+    name: Build and push Network
+    uses: ./.github/workflows/builder.yaml
+    with:
+      component: network
+    secrets: inherit
+
+  update-docker-compose:
+    name: Update Docker Compose
+    needs: [ui, api, network]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - name: Update Docker Compose
+        working-directory: deployment
+        run: |
+          sed -i 's/\(abodur\/sui-network:\).*/\1${{ github.sha }}/g' docker-compose.yaml
+          sed -i 's/\(abodur\/sui-ui:\).*/\1${{ github.sha }}/g' docker-compose.yaml
+          sed -i 's/\(abodur\/sui-api:\).*/\1${{ github.sha }}/g' docker-compose.yaml
+      - name: Commit new docker-compose.yaml
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "version: ${{ inputs.sha }} [skip ci]"
+          branch: ${{ github.ref }}
+
+  test:
+    name: Test on Ubuntu
+    needs: update-docker-compose
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository
       - name: Checkout
         uses: actions/checkout@v4
-  # ui:
-  #   name: Build and push UI
-  #   uses: ./.github/workflows/builder.yaml
-  #   with:
-  #     component: ui
-  #   secrets: inherit
-  # api:
-  #   name: Build and push API
-  #   uses: ./.github/workflows/builder.yaml
-  #   with:
-  #     component: api
-  #   secrets: inherit
-  # network:
-  #   name: Build and push Network
-  #   uses: ./.github/workflows/builder.yaml
-  #   with:
-  #     component: network
-  #   secrets: inherit
+      # Check docker-compose is installed
+      - name: Docker run
+        working-directory: deployment
+        run: cat docker-compose.yaml && docker-compose up -d --build
+      - name: Print the logs
+        working-directory: deployment
+        run: sleep 30 && docker-compose logs
+      # export folder from docker container
+      - name: Export the folder
+        run: |
+          docker cp network:/root/.sui/sui_config ./sui_config
+      - name: Upload the folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: sui_config
+          path: ./sui_config
+      - name: Connect to the network On api container
+        run: |
+          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://fullnode:9000"
 
-  # update-docker-compose:
-  #   name: Update Docker Compose
-  #   needs: [ui, api, network]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         token: ${{ secrets.ACCESS_TOKEN }}
-  #     - name: Update Docker Compose
-  #       working-directory: deployment
-  #       run: |
-  #         sed -i 's/\(abodur\/sui-network:\).*/\1${{ github.sha }}/g' docker-compose.yaml
-  #         sed -i 's/\(abodur\/sui-ui:\).*/\1${{ github.sha }}/g' docker-compose.yaml
-  #         sed -i 's/\(abodur\/sui-api:\).*/\1${{ github.sha }}/g' docker-compose.yaml
-  #     - name: Commit new docker-compose.yaml
-  #       uses: stefanzweifel/git-auto-commit-action@v5
-  #       with:
-  #         commit_message: "version: ${{ inputs.sha }} [skip ci]"
-  #         branch: ${{ github.ref }}
-
-  # test:
-  #   name: Test on Ubuntu
-  #   needs: update-docker-compose
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     # Checkout the repository
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #     # Check docker-compose is installed
-  #     - name: Docker run
-  #       working-directory: deployment
-  #       run: cat docker-compose.yaml && docker-compose up -d --build
-  #     - name: Print the logs
-  #       working-directory: deployment
-  #       # get logs for 30 seconds
-  #       run: sleep 30 && docker-compose logs
-  #     # - name: Test RPC API on api container
-  #     #   run: |
-  #     #     curl --location --request POST 'http://127.0.0.1:9000' \
-  #     #     --header 'Content-Type: application/json' \
-  #     #     --data-raw '{
-  #     #       "jsonrpc": "2.0",
-  #     #       "id": 1,
-  #     #       "method": "sui_getTotalTransactionBlocks",
-  #     #       "params": []
-  #     #     }'
-  #     - name: Connect to the network On api container
-  #       run: |
-  #         docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://fullnode:9000"
-          
