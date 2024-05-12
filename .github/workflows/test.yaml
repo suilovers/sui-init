@@ -9,27 +9,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository
+      # checkout https://github.com/MystenLabs/sui/
       - name: Checkout
         uses: actions/checkout@v4
-      # Check docker-compose is installed
-      - name: Docker run
-        working-directory: deployment/sui-network
-        run: docker-compose up -d --build
-      - name: Print the logs
-        working-directory: deployment/sui-network
-        # get logs for 30 seconds
-        run: sleep 30 && docker-compose logs
-      # - name: Test RPC API on api container
-      #   run: |
-      #     curl --location --request POST 'http://127.0.0.1:9000' \
-      #     --header 'Content-Type: application/json' \
-      #     --data-raw '{
-      #       "jsonrpc": "2.0",
-      #       "id": 1,
-      #       "method": "sui_getTotalTransactionBlocks",
-      #       "params": []
-      #     }'
-      - name: Connect to the network On api container
+        with:
+          organization: MystenLabs
+          repository: sui
+      # install cargo
+      - name: Install cargo
         run: |
-          docker exec api /bin/bash -c "sui client new-env --alias local --rpc http://10.0.0.12:9000"
-          
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source $HOME/.cargo/env
+          cargo --version
+      # install SUI
+      - name: Install SUI
+        run: cargo install --git
+      # install stress
+      - name: Install stress
+        working-directory: docker/stress
+        run: docker build -t stress:testing --build-arg SUI_TOOLS_IMAGE_TAG=mainnet-v1.19.1 .
+      # build Docker file
+      - name: Build Docker file
+        working-directory: docker/sui-network
+        run: docker build -t 
+      # run compose
+      - name: Docker run
+        working-directory: docker/sui-network
+        run: docker-compose up -d --build
+
