@@ -58,7 +58,6 @@ export default function CommandExecutionForm({ command, onSubmit }: CommandExecu
             setOpen(true);
         } else {
             let isReturned = await fetchCallWithArguments(_path as string, argumentBodyNames, optionsBodyNames, argumentValues, optionValues);
-            console.log(isReturned);
             if (!isReturned) {
                 setOpen(true);
             } else {

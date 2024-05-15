@@ -47,7 +47,22 @@ export async function fetchCall(path: string) {
     return false;
 }
 
-export async function fetchCallWithArguments(path: string, argumentBodyNames: any, optionsBodyNames: any, argumentValues: any, optionValues: any) {
+/**
+ * Makes a POST request to the specified path with the provided arguments and options.
+ * @param {string} path - The path to make the request to.
+ * @param {any[]} argumentBodyNames - An array of argument body names.
+ * @param {any[]} optionsBodyNames - An array of options body names.
+ * @param {any[]} argumentValues - An array of argument values.
+ * @param {any[]} optionValues - An array of option values.
+ * @returns {Promise<any>} - A promise that resolves to the response data if successful, or false if there was an error.
+ */
+export async function fetchCallWithArguments(
+    path: string,
+    argumentBodyNames: any[],
+    optionsBodyNames: any[],
+    argumentValues: any[],
+    optionValues: any[]
+): Promise<any> {
     const body: any = {};
 
     argumentBodyNames.forEach((key: any, index: any) => {
@@ -60,11 +75,19 @@ export async function fetchCallWithArguments(path: string, argumentBodyNames: an
         });
     }
 
-    const response = await _axios.post(path, body).catch((error) => {
-        console.log(error);
-    });
+    const response = await _axios.post(path, body);
     if (response) {
         return response.data;
     }
+
     return false;
+}
+
+/**
+ * Fetches the local network data.
+ * @returns A Promise that resolves to a boolean indicating the success of the request.
+ */
+export async function fetchLocalNetwork(): Promise<boolean> {
+    const response = await _axios.post('/network/local');
+    return response.data;
 }

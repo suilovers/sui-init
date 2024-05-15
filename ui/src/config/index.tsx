@@ -6,29 +6,41 @@ export enum CallStatus {
     ERROR
 }
 
-type EnvironmentData = {
+export enum NetworkType {
+    Local = 'local',
+    Devnet = 'Devnet',
+    Testnet = 'Testnet',
+    Mainnet = 'Mainnet'
+}
+
+export type EnvironmentData = {
+    title: string;
     fullNodeUrl: string;
     gasFaucetUrl: string | null;
 };
 
 type Environments = {
-    [key: string]: EnvironmentData;
+    [key in NetworkType]: EnvironmentData;
 };
 
 export const NetworkLocations: Environments = {
-    local: {
+    [NetworkType.Local]: {
+        title: 'Local',
         fullNodeUrl: 'http://127.0.0.1:9000',
         gasFaucetUrl: 'http://127.0.0.1:9123/gas'
     },
-    Devnet: {
+    [NetworkType.Devnet]: {
+        title: 'Devnet',
         fullNodeUrl: 'https://fullnode.devnet.sui.io:443',
         gasFaucetUrl: 'https://faucet.devnet.sui.io/gas'
     },
-    Testnet: {
+    [NetworkType.Testnet]: {
+        title: 'Testnet',
         fullNodeUrl: 'https://fullnode.testnet.sui.io:443',
         gasFaucetUrl: 'https://faucet.testnet.sui.io/gas'
     },
-    Mainnet: {
+    [NetworkType.Mainnet]: {
+        title: 'Mainnet',
         fullNodeUrl: 'https://fullnode.mainnet.sui.io:443',
         gasFaucetUrl: null
     }
