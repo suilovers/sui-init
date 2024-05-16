@@ -22,7 +22,9 @@ export default function CustomSider() {
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
-                        boxSizing: 'border-box'
+                        boxSizing: 'border-box',
+                        '-ms-overflow-style': 'none',
+                        scrollbarWidth: 'none'
                     }
                 }}
                 variant="permanent"
@@ -35,8 +37,11 @@ export default function CustomSider() {
 
                 <List
                     component="nav"
-                    sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-                    // always open
+                    sx={{
+                        width: '100%',
+                        maxWidth: 360,
+                        bgcolor: 'background.paper'
+                    }}
                     aria-labelledby="nested-list-subheader"
                 >
                     {commands.map((command) => (

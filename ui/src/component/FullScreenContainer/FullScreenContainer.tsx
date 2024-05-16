@@ -3,13 +3,16 @@ import { makeStyles } from '@mui/styles';
 import { ReactNode } from 'react';
 
 const useStyles = makeStyles({
-    root: {
+    fullScreenContainer: {
         display: 'flex !important',
         justifyContent: 'center !important',
         alignItems: 'center !important',
-        marginLeft: '240px',
-        width: 'calc(100% - 240px)',
+        minHeight: 'calc(100vh - 65px)',
+        width: 'calc(100vw - 240px)',
         height: 'max-content',
+        position: 'relative',
+        top: "65px",
+        left: '180px'
     }
 });
 
@@ -19,5 +22,5 @@ interface FullScreenContainerProps {
 
 export default function FullScreenContainer({ children }: FullScreenContainerProps) {
     const classes = useStyles();
-    return <Box className={classes.root}>{children}</Box>;
+    return <Box className={classes.fullScreenContainer}>{children}</Box>;
 }

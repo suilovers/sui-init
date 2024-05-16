@@ -1,3 +1,4 @@
+import { EnvironmentData, NetworkType } from '../config';
 import _axios from '../config/axios';
 import { ExampleTestReponse } from '../types/sui/response';
 
@@ -30,6 +31,36 @@ export async function fetchCommand(parentCommand: string, childCommand: string) 
     const response = await _axios.post(`/command`, {
         paths: [`/${parentCommand}`, `/${childCommand}`]
     });
+    return response.data;
+}
+
+/**
+ * Switches the network to the specified network type.
+ * @param network The network type to switch to.
+ * @returns A Promise that resolves to the response data from the server.
+ */
+export async function switchNetwork(network: NetworkType) {
+    const response = await _axios.post('/client/switch', {
+        env: network
+    });
+    return response.data;
+}
+
+/**
+ * Fetches the local network data.
+ * @returns A Promise that resolves to a boolean indicating the success of the request.
+ */
+export async function checkLocalNetwork(): Promise<boolean> {
+    const response = await _axios.post('/network/check-local-network');
+    return response.data;
+}
+
+/**
+ * Retrieves the network environments.
+ * @returns A Promise that resolves to an object containing the network environments.
+ */
+export async function getNetworkEnvironments(): Promise<{ [key in NetworkType]: EnvironmentData }> {
+    const response = await _axios.post('/network/environments');
     return response.data;
 }
 
@@ -81,13 +112,4 @@ export async function fetchCallWithArguments(
     }
 
     return false;
-}
-
-/**
- * Fetches the local network data.
- * @returns A Promise that resolves to a boolean indicating the success of the request.
- */
-export async function fetchLocalNetwork(): Promise<boolean> {
-    const response = await _axios.post('/network/local');
-    return response.data;
 }

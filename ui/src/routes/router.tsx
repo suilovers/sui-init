@@ -32,6 +32,10 @@ export default function Router() {
                             element: <DashboardPage />
                         },
                         {
+                            path: 'editor',
+                            element: <MoveEditorPage />
+                        },
+                        {
                             path: ':parentCommand/:childCommand',
                             element: <CommandExecutionPage />
                         }
@@ -44,3 +48,4 @@ export default function Router() {
 
 const DashboardPage = Loadable(lazy(() => import('../pages/DashboardPage')));
 const CommandExecutionPage = Loadable(lazy(() => import('../pages/CommandExecutionPage')));
+const MoveEditorPage = Loadable(lazy(() => import('../pages/MoveEditorPage')));

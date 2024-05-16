@@ -12,16 +12,16 @@ interface CommandExecutionFormProps {
 const useStyles = makeStyles((theme: Theme) => ({
     root: {},
     formControl: {
-        margin: theme.spacing(1),
+        margin: '8px 0 !important',
         padding: theme.spacing(1),
         minWidth: 120
     },
     formGroupTitle: {
-        margin: theme.spacing(1)
+        margin: '8px !important'
     },
     formButton: {
         padding: theme.spacing(1),
-        margin: theme.spacing(2)
+        marginTop: '16px !important'
     }
 }));
 

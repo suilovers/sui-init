@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CallStatus, EnvironmentData, NetworkLocations } from '../../config';
-import { fetchLocalNetwork } from '../../services/SuiService';
+import { checkLocalNetwork } from '../../services/SuiService';
 
 /**
  * Filters out the 'local' network from the given array of networks.
@@ -18,11 +18,10 @@ export function useLoadNetworks() {
     const [status, setStatus] = useState<CallStatus>(CallStatus.LOADING);
 
     const localNetwork = NetworkLocations.local;
-
     useEffect(() => {
-        const intervalId = setInterval(async () => {
+        const checkNetworks = async () => {
             try {
-                const isNetworkAvailable = await fetchLocalNetwork();
+                const isNetworkAvailable = await checkLocalNetwork();
                 if (isNetworkAvailable) {
                     setNetworks(Object.entries(NetworkLocations));
                     setStatus(CallStatus.SUCCESS);
@@ -33,7 +32,13 @@ export function useLoadNetworks() {
                 setNetworks(withoutLocal(Object.entries(NetworkLocations)));
                 setStatus(CallStatus.ERROR);
             }
-        }, 5000); // 5000 milliseconds = 5 seconds
+        };
+
+        // Call the function immediately
+        checkNetworks();
+
+        // Then continue calling it at the specified interval
+        const intervalId = setInterval(checkNetworks, 5000); // 5000 milliseconds = 5 seconds
 
         return () => clearInterval(intervalId);
     }, [localNetwork]);

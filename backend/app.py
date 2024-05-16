@@ -2,8 +2,10 @@ import json
 import subprocess
 from flask import Flask, request, jsonify
 
-from flask_cors import  CORS
+from flask_cors import CORS
 from pydantic import ValidationError
+from network import NetworkInitializer
+from config import Config, NetworkType, NetworkDetails
 from dto import (
     ClientBalanceDTO,
     KeytoolConvertDTO,
@@ -46,57 +48,10 @@ from dto import (
 )
 from utils import sui_command, cat_command
 
+config = Config()
+networkInitializer = NetworkInitializer(config.NETWORK_LOCATIONS)
+
 app = Flask(__name__)
-
-# @start_blueprint.route("/", methods=["POST"])
-# def start():
-#     """
-#     Starts the application with the provided configuration.
-
-#     Returns:
-#         The response from the `sui_command` function.
-#     """
-#     data = StartDTO(**request.json)
-#     command = ["start"]
-#     if data.network_config:
-#         command.extend(["--network.config", data.network_config])
-#     if data.no_full_node:
-#         command.append("--no-full-node")
-#     response = sui_command(command, isJson=False)
-#     return response
-
-
-### CLIENT ENDPOINTS ###
-@app.route("/client/", methods=["POST"])
-def client():
-    command = ["sui", "client"]  # Assuming "sui" is the executable name
-
-    process = subprocess.Popen(
-        command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    output, error = process.communicate(input=b"y\n\n0\n")
-    print("Output:", output.decode(), "Error:", error.decode())
-    main_output = "s"
-    return main_output
-
-    # if error:
-    #     print("Error:", error.decode())
-    #     main_output = error.decode()
-    # else:
-    #     # Pipe the output to echo and print the result (assuming text output)
-    #     echo_process = subprocess.Popen(
-    #         ["echo", "y"], stdin=subprocess.PIPE, stdout=subprocess.PIPE
-    #     )
-    #     echo_output, echo_error = echo_process.communicate(input=output)
-    #     if echo_error:
-    #         print()
-    #         print("Error in echo:", echo_error.decode())
-    #         main_output = echo_error.decode()
-    #     else:
-    #         print()
-    #         print("Combined Output:", echo_output.decode())
-    #         main_output = echo_output.decode()
-    #     return main_output
 
 
 @app.route("/client/active-address", methods=["POST"])
@@ -311,19 +266,6 @@ def client_new_address():
             command.append(data.word_length)
         if data.derivation_path:
             command.append(data.derivation_path)
-        response = sui_command(command)
-        return response
-    except ValidationError as e:
-        return {"error": str(e)}, 400
-
-
-@app.route("/client/new-env", methods=["POST"])
-def client_new_env():
-    try:
-        data = ClientNewEnvDTO(**request.json)
-        command = ["client", "new-env", "--alias", data.alias, "--rpc", data.rpc]
-        if data.ws:
-            command.extend(["--ws", data.ws])
         response = sui_command(command)
         return response
     except ValidationError as e:
@@ -935,8 +877,37 @@ def get_specific_info():
     return data
 
 
+@app.route("/network/check-local-network", methods=["POST"])
+def check_local_network():
+    command = [
+        "client",
+        "new-env",
+        "--alias",
+        "local",
+        "--rpc",
+        config.NETWORK_LOCATIONS[NetworkType.Local][NetworkDetails.RpcEndpoint],
+    ]
+    try:
+        response = sui_command(command), 200
+    except:
+        return {"error": "Local network not found"}, 400
+    return response
+
+
+@app.route("/network/details", methods=["POST"])
+def get_network_details():
+    """
+    Retrieves the network details.
+
+    Returns:
+        A JSON response containing the network locations.
+    """
+    return jsonify(config.network_locations)
+
+
 cors = CORS(app, resource={r"/*": {"origins": "*"}})
 app.config["CORS_HEADERS"] = "Content-Type"
+networkInitializer.init_networks()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

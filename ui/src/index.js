@@ -2,6 +2,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { NetworkContextProvider } from './contexts/NetworkContext';
 import { Router } from './routes';
 
 const darkTheme = createTheme({
@@ -13,10 +14,12 @@ const darkTheme = createTheme({
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-            <Router />
-        </ThemeProvider>
+        <NetworkContextProvider>
+            <ThemeProvider theme={darkTheme}>
+                <CssBaseline />
+                <Router />
+            </ThemeProvider>
+        </NetworkContextProvider>
     </React.StrictMode>
 );
 
