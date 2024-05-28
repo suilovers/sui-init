@@ -16,6 +16,11 @@ def sui_multi_command(sui_commands):
     print(output, error)
     return None
 
+def generic_command(command):
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    print(output, error)
+    return output
 def cat_command(file_path, isJson=True, name=None):
     expanded_path = os.path.expanduser(file_path)
     with open(expanded_path, "r") as f:

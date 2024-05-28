@@ -78,6 +78,15 @@ export async function fetchCall(path: string) {
     return false;
 }
 
+export async function fetchCallWithBody(path: string, body: any) {
+    const response = await _axios.post(path, body);
+
+    if (response) {
+        return response.data;
+    }
+    return false;
+}
+
 /**
  * Makes a POST request to the specified path with the provided arguments and options.
  * @param {string} path - The path to make the request to.

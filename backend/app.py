@@ -1,4 +1,5 @@
 import json
+from os import listdir
 import subprocess
 from flask import Flask, request, jsonify
 
@@ -46,7 +47,7 @@ from dto import (
     KeytoolUpdateAliasDTO,
     TypeDTO,
 )
-from utils import sui_command, cat_command
+from utils import generic_command, sui_command, cat_command
 
 config = Config()
 networkInitializer = NetworkInitializer(config.NETWORK_LOCATIONS)
@@ -904,6 +905,20 @@ def get_network_details():
     """
     return jsonify(config.network_locations)
 
+
+@app.route("/move/create", methods=["POST"])
+def create_move():
+    data = request.get_json()
+    command = ["move", "new", data["projectName"]]
+    output = sui_command(command, isJson=False, name="output")
+    sources = generic_command('ls '+data["projectName"]+'/sources').decode("utf-8")
+    tests = generic_command('ls '+data["projectName"]+'/tests').decode("utf-8")
+    toml_file = generic_command('cat '+data["projectName"]+'/Move.toml').decode("utf-8")
+    test_list = [test for test in tests.split('\n') if test]
+    source_list = [source for source in sources.split('\n') if source]
+    test_dict = {test: generic_command('cat ' + data["projectName"] + '/tests/' + test).decode("utf-8") for test in test_list}
+    source_dict = {source: generic_command('cat ' + data["projectName"] + '/sources/' + source).decode("utf-8") for source in source_list}
+    return { "tests": test_dict, "sources": source_dict, "toml": toml_file}
 
 cors = CORS(app, resource={r"/*": {"origins": "*"}})
 app.config["CORS_HEADERS"] = "Content-Type"
