@@ -27,6 +27,14 @@ export default function CustomAppBar() {
                 <Button
                     variant="contained"
                     className={classes.moveEditorButton}
+                    onClick={() => navigate(PATH_MAIN.dashboard.dashboard())}
+                    endIcon={<WaterDropIcon />}
+                >
+                    Open Local SuiDashboard
+                </Button>
+                <Button
+                    variant="contained"
+                    className={classes.moveEditorButton}
                     onClick={() => navigate(PATH_MAIN.dashboard.moveEditor())}
                     endIcon={<WaterDropIcon />}
                 >

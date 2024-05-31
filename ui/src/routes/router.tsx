@@ -40,6 +40,10 @@ export default function Router() {
                             element: <CommandExecutionPage />
                         }
                     ]
+                },
+                {
+                    path: 'dashboard',
+                    element: <SuiScanDashboardPage />
                 }
             ])}
         />
@@ -49,3 +53,4 @@ export default function Router() {
 const DashboardPage = Loadable(lazy(() => import('../pages/DashboardPage')));
 const CommandExecutionPage = Loadable(lazy(() => import('../pages/CommandExecutionPage')));
 const MoveEditorPage = Loadable(lazy(() => import('../pages/MoveEditorPage')));
+const SuiScanDashboardPage = Loadable(lazy(() => import('../pages/SuiScanDashboardPage')));

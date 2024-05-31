@@ -3,7 +3,8 @@
 const PATH_MAIN = {
     dashboard: {
         root: () => '/',
-        moveEditor: () => '/editor'
+        moveEditor: () => '/editor',
+        dashboard: () => '/dashboard'
     }
 };
 
