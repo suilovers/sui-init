@@ -90,6 +90,10 @@ const useProjectManager = () => {
         setCurrentFile({ filename: '', type: '', content: '' });
     }
 
+    const publishProject = () => {
+        fetchCallWithBody('/move/publish', { projectName,budget:"50000" });
+    }
+
     return {
         open,
         children,
@@ -110,7 +114,8 @@ const useProjectManager = () => {
         changeFileName,
         buildProject,
         testProject,
-        deleteProject
+        deleteProject,
+        publishProject
     };
 };
 

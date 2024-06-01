@@ -892,6 +892,8 @@ def check_local_network():
     try:
         response = sui_command(command), 200
     except:
+        print("--------------------")
+        print(command)
         return {"error": "Local network not found"}, 400
     return response
 
@@ -1016,6 +1018,16 @@ def test_move():
 cors = CORS(app, resource={r"/*": {"origins": "*"}})
 app.config["CORS_HEADERS"] = "Content-Type"
 networkInitializer.init_networks()
+
+@app.route("/move/publish", methods=["POST"])
+def publish_move():
+    data = request.get_json()
+    project_name = data["projectName"]
+    budget = data["budget"]
+    path = os.getcwd()
+    command = ["client", "publish","--gas-budget",budget , path + "/" + project_name]
+    output = sui_command(command, isJson=False, name="output")
+    return {"output": output}
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=7777)

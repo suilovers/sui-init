@@ -28,7 +28,8 @@ export default function MoveEditorView() {
         changeFileName,
         buildProject,
         testProject,
-        deleteProject
+        deleteProject,
+        publishProject
     } = useProjectManager();
 
     const {
@@ -115,6 +116,8 @@ export default function MoveEditorView() {
                 <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={buildProject}>Build Project</Button>
                 <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={testProject}>Test Project</Button>
                 <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={deleteProject}>Delete Project</Button>
+                <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={publishProject}>Publish Project</Button>
+
             </div>
         </div>
     );
