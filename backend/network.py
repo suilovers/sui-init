@@ -1,14 +1,15 @@
+from typing import Dict, Union
 from utils import sui_command
 from config import NetworkDetails, NetworkType
 
 
 class NetworkInitializer:
-    def __init__(self, networkLocations: dict[str, dict[str, str | None]]) -> None:
+    def __init__(self, networkLocations: Dict[str, Dict[str, Union[str, None]]]) -> None:
         """
         Initializes the NetworkInitializer class.
 
         Args:
-            networkLocations (dict[str, dict[str, str | None]]): A dictionary containing network locations.
+            networkLocations (Dict[str, Dict[str, Union[str, None]]]): A dictionary containing network locations.
         """
         self.network_locations = networkLocations
 

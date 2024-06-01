@@ -44,10 +44,10 @@ export default function MoveEditorView() {
         else if(currentFile.type === 'toml') {
             setToml(editorRef.current.getValue());
         }
-    }, [editorRef, currentFile, setCurrentFile, sources, tests, toml, setSources, setTests, setToml]);
+    }, [editorRef, currentFile, sources, tests, toml]);
 
     return (
-        <div style={{ display: 'flex', height: '100vh', width: '200vh' }}>
+        <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
             <div id='main' style={{ flex: 1 }}>
                 <ModalComponent id="moveModal" children={children} open={open} onClose={handleOpen} />
                 <Editor
@@ -58,7 +58,7 @@ export default function MoveEditorView() {
                     defaultValue={initialValue}
                 />
             </div>
-            <div style={{ width: '300px', backgroundColor: '#2e2e2e', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center' }}>
+            <div style={{  backgroundColor: '#2e2e2e', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center' }}>
                 <MoveMenuButton changeInput={changeInput} buttonText="Create New Move Project" buttonLabel="Create" placeholder="Enter the Project Name" run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Create")} />
                 <MoveMenuButton changeInput={changeInput} buttonText='Open Existing Move Project' buttonLabel='Open' placeholder='Enter the Project Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Open")} />
                 <Box mb={2}>

@@ -920,9 +920,45 @@ def create_move():
     source_dict = {source: generic_command('cat ' + data["projectName"] + '/sources/' + source).decode("utf-8") for source in source_list}
     return { "tests": test_dict, "sources": source_dict, "toml": toml_file}
 
+@app.route("/move/save", methods=["POST"])
+def save_move():
+    data = request.get_json()
+    project_name = data["projectName"]
+    tests = data["tests"]
+    sources = data["sources"]
+    toml = data["toml"]
+    # save toml file
+    toml_file = open(project_name + "/Move.toml", "w")
+    toml_file.write(toml)
+    toml_file.close()
+    # save sources
+    for source in sources:
+        source_file = open(project_name + "/sources/" + source, "w")
+        source_file.write(sources[source])
+        source_file.close()
+    # save tests
+    for test in tests:
+        test_file = open(project_name + "/tests/" + test, "w")
+        test_file.write(tests[test])
+        test_file.close()
+    return "Saved successfully"
+
+@app.route("/move/open", methods=["POST"])
+def open_move():
+    data = request.get_json()
+    project_name = data["projectName"]
+    sources = generic_command('ls '+project_name+'/sources').decode("utf-8")
+    tests = generic_command('ls '+project_name+'/tests').decode("utf-8")
+    toml_file = generic_command('cat '+project_name+'/Move.toml').decode("utf-8")
+    test_list = [test for test in tests.split('\n') if test]
+    source_list = [source for source in sources.split('\n') if source]
+    test_dict = {test: generic_command('cat ' + project_name + '/tests/' + test).decode("utf-8") for test in test_list}
+    source_dict = {source: generic_command('cat ' + project_name + '/sources/' + source).decode("utf-8") for source in source_list}
+    return { "tests": test_dict, "sources": source_dict, "toml": toml_file}
+
 cors = CORS(app, resource={r"/*": {"origins": "*"}})
 app.config["CORS_HEADERS"] = "Content-Type"
 networkInitializer.init_networks()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", debug=True, port=7777)
