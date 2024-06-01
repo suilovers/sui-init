@@ -27,7 +27,8 @@ export default function MoveEditorView() {
         setToml,
         changeFileName,
         buildProject,
-        testProject
+        testProject,
+        deleteProject
     } = useProjectManager();
 
     const {
@@ -50,7 +51,7 @@ export default function MoveEditorView() {
     }, [editorRef, currentFile, sources, tests, toml]);
 
     return (
-        <div style={{ display: 'flex', height: '100vh', width: '100vw' }}>
+        <div style={{ display: 'flex', height: '150vh', width: '100vw' }}>
             <div id='main' style={{ flex: 1 }}>
                 <ModalComponent id="moveModal" children={children} open={open} onClose={handleOpen} />
                 <Editor
@@ -64,8 +65,10 @@ export default function MoveEditorView() {
             <div style={{  backgroundColor: '#2e2e2e', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center' }}>
                 <MoveMenuButton changeInput={changeInput} buttonText="Create New Move Project" buttonLabel="Create" placeholder="Enter the Project Name" run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Create")} />
                 <MoveMenuButton changeInput={changeInput} buttonText='Open Existing Move Project' buttonLabel='Open' placeholder='Enter the Project Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Open")} />
-                <MoveMenuButton changeInput={changeFileName} buttonText='Create Source File' buttonLabel='Create' placeholder='Enter the Project Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Source")} />
-                <MoveMenuButton changeInput={changeFileName} buttonText='Create Test File' buttonLabel='Create' placeholder='Enter the Project Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Test")} />
+                <MoveMenuButton changeInput={changeFileName} buttonText='Create Source File' buttonLabel='Create' placeholder='Enter the File Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Source")} />
+                <MoveMenuButton changeInput={changeFileName} buttonText='Create Test File' buttonLabel='Create' placeholder='Enter the File Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Test")} />
+                <MoveMenuButton changeInput={changeFileName} buttonText='Delete Source File' buttonLabel='Delete' placeholder='Enter the File Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("DeleteSource")} />
+                <MoveMenuButton changeInput={changeFileName} buttonText='Delete Test File' buttonLabel='Delete' placeholder='Enter the File Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("DeleteTest")} />
 
                 <Box mb={2}>
                     <List>
@@ -111,6 +114,7 @@ export default function MoveEditorView() {
                 <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={saveProject}>Save All Project</Button>
                 <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={buildProject}>Build Project</Button>
                 <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={testProject}>Test Project</Button>
+                <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={deleteProject}>Delete Project</Button>
             </div>
         </div>
     );

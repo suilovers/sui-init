@@ -942,6 +942,14 @@ def create_move():
     source_dict = {source: generic_command('cat ' + data["projectName"] + '/sources/' + source).decode("utf-8") for source in source_list}
     return { "tests": test_dict, "sources": source_dict, "toml": toml_file}
 
+@app.route("/move/delete", methods=["POST"])
+def delete_move():
+    data = request.get_json()
+    command = ["rm", "-r", data["projectName"]]
+    output = generic_command(command)
+    return "Deleted successfully"
+
+
 @app.route("/move/save", methods=["POST"])
 def save_move():
     data = request.get_json()
@@ -962,6 +970,15 @@ def save_move():
         test_file = open(project_name + "/tests/" + test, "w")
         test_file.write(tests[test])
         test_file.close()
+    # delete files which is not in sources or tests
+    sources_files = listdir(project_name + "/sources")
+    tests_files = listdir(project_name + "/tests")
+    for file in sources_files:
+        if file not in sources:
+            os.remove(project_name + "/sources/" + file)
+    for file in tests_files:
+        if file not in tests:
+            os.remove(project_name + "/tests/" + file)
     return "Saved successfully"
 
 @app.route("/move/open", methods=["POST"])

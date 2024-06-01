@@ -39,6 +39,19 @@ const useProjectManager = () => {
         } else if (click === "Test") {
             setCurrentFile({ filename: createdFileName+".move", type: 'test', content: '' });
             setClick('');
+        } else if (click === "DeleteSource") {
+            const newSources = { ...sources };
+            delete newSources[createdFileName+".move"];
+            // set current file to empty
+            setCurrentFile({ filename: '', type: '', content: '' });
+            setSources(newSources);
+            setClick('');
+        } else if (click === "DeleteTest") {
+            const newTests = { ...tests };
+            delete newTests[createdFileName+".move"];
+            setCurrentFile({ filename: '', type: '', content: '' });
+            setTests(newTests);
+            setClick('');
         }
     }, [click, projectName]);
 
@@ -69,6 +82,13 @@ const useProjectManager = () => {
     const testProject = () => {
         fetchCallWithBody('/move/test', { projectName });
     }
+    const deleteProject = () => {
+        fetchCallWithBody('/move/delete', { projectName });
+        setSources({});
+        setTests({});
+        setToml('');
+        setCurrentFile({ filename: '', type: '', content: '' });
+    }
 
     return {
         open,
@@ -89,7 +109,8 @@ const useProjectManager = () => {
         setToml,
         changeFileName,
         buildProject,
-        testProject
+        testProject,
+        deleteProject
     };
 };
 
