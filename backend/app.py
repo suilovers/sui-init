@@ -912,7 +912,6 @@ def create_move():
     data = request.get_json()
     command = ["move", "new", data["projectName"]]
     output = sui_command(command, isJson=False, name="output")
-    os.mkdir(data["projectName"]+"/tests")
     sources = ["main.move"]
     tests = ["main.move"]
     for source in sources:
