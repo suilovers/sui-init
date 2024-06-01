@@ -26,7 +26,7 @@ type Environments = {
 export const NetworkLocations: Environments = {
     [NetworkType.Local]: {
         title: 'Local',
-        fullNodeUrl: 'http://127.0.0.1:9000',
+        fullNodeUrl: 'http://127.0.0.1:8000',
         gasFaucetUrl: 'http://127.0.0.1:9123/gas'
     },
     [NetworkType.Devnet]: {
@@ -44,4 +44,11 @@ export const NetworkLocations: Environments = {
         fullNodeUrl: 'https://fullnode.mainnet.sui.io:443',
         gasFaucetUrl: null
     }
+};
+
+export const SuiScanUrlMap: { [key in NetworkType]: string } = {
+    [NetworkType.Local]: `https://custom.suiscan.xyz/custom/home/?network=${encodeURIComponent(NetworkLocations.local.fullNodeUrl)}`,
+    [NetworkType.Devnet]: 'https://suiscan.xyz/devnet/home',
+    [NetworkType.Testnet]: 'https://suiscan.xyz/testnet/home',
+    [NetworkType.Mainnet]: 'https://suiscan.xyz/mainnet/home'
 };

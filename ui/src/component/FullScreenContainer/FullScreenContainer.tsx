@@ -10,9 +10,9 @@ const useStyles = makeStyles({
         minHeight: 'calc(100vh - 65px)',
         width: 'calc(100vw - 240px)',
         height: 'max-content',
-        position: 'relative',
-        top: "65px",
-        left: '180px'
+        position: 'absolute',
+        top: '65px',
+        left: '240px'
     }
 });
 

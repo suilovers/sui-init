@@ -1,41 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { FullScreenContainer } from '../component/FullScreenContainer';
+import { SuiScanUrlMap } from '../config';
+import useSwitchNetwork from '../hooks/useSwitchNetwork';
 
 export default function SuiScanDashboardPage() {
-    const [url, setUrl] = useState<string>('');
-    const iframeRef = useRef<HTMLIFrameElement>(null);
-
-    useEffect(() => {
-        const iframe = iframeRef.current;
-        if (iframe) {
-            // Make sure the iframe content is loaded
-            iframe.onload = () => {
-                const iframeDocument = iframe.contentDocument || iframe.contentWindow?.document;
-                if (iframeDocument) {
-                    // Example: Change the background color of the body inside the iframe
-                    iframeDocument.body.style.backgroundColor = 'lightblue';
-                    
-                    // Example: Add custom content inside the iframe
-                    const customDiv = iframeDocument.createElement('div');
-                    customDiv.innerHTML = '<p>This is custom content added to the iframe!</p>';
-                    iframeDocument.body.appendChild(customDiv);
-                }
-            };
-        }
-    }, []);
-
+    const { currentNetwork } = useSwitchNetwork();
     return (
-        <div
-            style={{
-                width: '100vw',
-                height: '100vh'
-            }}
-        >
-            <iframe
-                ref={iframeRef}
-                width="100%"
-                height="100%"
-                src="https://custom.suiscan.xyz/custom/home/?network=http%3A%2F%2Flocalhost%3A8000"
-            />
-        </div>
+        <FullScreenContainer>
+            <div
+                style={{
+                    flexGrow: 1,
+                    height: '100vh',
+                    overflow: 'hidden'
+                }}
+            >
+                <iframe
+                    width="100%"
+                    height="100%"
+                    title="SUI Scan Dashboard"
+                    style={{
+                        position: 'absolute',
+                        top: '-400px', // move up by 240px
+                        height: 'calc(100% + 400px)' // add 240px to the height to compensate for the upward shift
+                    }}
+                    src={SuiScanUrlMap[currentNetwork]}
+                />
+            </div>
+        </FullScreenContainer>
     );
 }
