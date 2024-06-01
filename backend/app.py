@@ -1,5 +1,6 @@
 import json
 from os import listdir
+import os
 import subprocess
 from flask import Flask, request, jsonify
 
@@ -911,6 +912,28 @@ def create_move():
     data = request.get_json()
     command = ["move", "new", data["projectName"]]
     output = sui_command(command, isJson=False, name="output")
+    os.mkdir(data["projectName"]+"/tests")
+    sources = ["main.move"]
+    tests = ["main.move"]
+    for source in sources:
+        source_file = open(data["projectName"] + "/sources/" + source, "w")
+        source_file.write("""module 0x1::MyModule {
+    public fun hello_world() {
+        debug::print("Hello, Move!");
+    }
+}
+""")
+        source_file.close()
+    for test in tests:
+        test_file = open(data["projectName"] + "/tests/" + test, "w")
+        test_file.write("""script {
+    use 0x1::MyModule;
+
+    fun test_hello_world() {
+        MyModule::hello_world();
+    }
+}""")
+        test_file.close()        
     sources = generic_command('ls '+data["projectName"]+'/sources').decode("utf-8")
     tests = generic_command('ls '+data["projectName"]+'/tests').decode("utf-8")
     toml_file = generic_command('cat '+data["projectName"]+'/Move.toml').decode("utf-8")
@@ -924,14 +947,13 @@ def create_move():
 def save_move():
     data = request.get_json()
     project_name = data["projectName"]
-    tests = data["tests"]
-    sources = data["sources"]
-    toml = data["toml"]
+    tests = {key: value.replace("\r", "") for key, value in data["tests"].items()}
+    sources = {key: value.replace("\r", "") for key, value in data["sources"].items()}
+    toml = data["toml"].replace("\r", "")
     # save toml file
     toml_file = open(project_name + "/Move.toml", "w")
     toml_file.write(toml)
     toml_file.close()
-    # save sources
     for source in sources:
         source_file = open(project_name + "/sources/" + source, "w")
         source_file.write(sources[source])
@@ -956,6 +978,25 @@ def open_move():
     source_dict = {source: generic_command('cat ' + project_name + '/sources/' + source).decode("utf-8") for source in source_list}
     return { "tests": test_dict, "sources": source_dict, "toml": toml_file}
 
+
+@app.route("/move/build", methods=["POST"])
+def build_move():
+    data = request.get_json()
+    project_name = data["projectName"]
+    path = os.getcwd()
+    command = ["move", "build", "--path" , path + "/" + project_name]
+    output = sui_command(command, isJson=False, name="output")
+    return {"output": output}
+
+
+@app.route("/move/test", methods=["POST"])
+def test_move():
+    data = request.get_json()
+    project_name = data["projectName"]
+    path = os.getcwd()
+    command = ["move", "test", "--path" , path + "/" + project_name]
+    output = sui_command(command, isJson=False, name="output")
+    return {"output": output}
 cors = CORS(app, resource={r"/*": {"origins": "*"}})
 app.config["CORS_HEADERS"] = "Content-Type"
 networkInitializer.init_networks()

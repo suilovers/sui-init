@@ -24,7 +24,10 @@ export default function MoveEditorView() {
         setCurrentFile,
         setSources,
         setTests,
-        setToml
+        setToml,
+        changeFileName,
+        buildProject,
+        testProject
     } = useProjectManager();
 
     const {
@@ -61,6 +64,9 @@ export default function MoveEditorView() {
             <div style={{  backgroundColor: '#2e2e2e', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center' }}>
                 <MoveMenuButton changeInput={changeInput} buttonText="Create New Move Project" buttonLabel="Create" placeholder="Enter the Project Name" run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Create")} />
                 <MoveMenuButton changeInput={changeInput} buttonText='Open Existing Move Project' buttonLabel='Open' placeholder='Enter the Project Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Open")} />
+                <MoveMenuButton changeInput={changeFileName} buttonText='Create Source File' buttonLabel='Create' placeholder='Enter the Project Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Source")} />
+                <MoveMenuButton changeInput={changeFileName} buttonText='Create Test File' buttonLabel='Create' placeholder='Enter the Project Name' run={handleOpen} changeChildren={changeChildren} formRun={() => setClick("Test")} />
+
                 <Box mb={2}>
                     <List>
                         <ListItem>
@@ -96,11 +102,15 @@ export default function MoveEditorView() {
                 <Box mb={2}>
                     <List>
                         <ListItem>
-                            <ListItemText primary="TOML" style={{ textAlign: 'center' }} />
+                            <Button variant="contained" color="primary" onClick={() => {editorRef.current.setValue(toml)
+                                setCurrentFile({ filename: 'Move.toml', type: 'toml', content: toml })
+                            }}> Open Toml </Button>
                         </ListItem>
                     </List>
                 </Box>
-                <Button variant="contained" color="primary" onClick={saveProject}>Save All Project</Button>
+                <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={saveProject}>Save All Project</Button>
+                <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={buildProject}>Build Project</Button>
+                <Button variant="contained" color="primary" style={{marginBottom:"10px"}} onClick={testProject}>Test Project</Button>
             </div>
         </div>
     );
