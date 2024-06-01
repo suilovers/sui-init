@@ -21,7 +21,10 @@ export default function MoveEditorView() {
         handleOpen,
         changeChildren,
         saveProject,
-        setCurrentFile
+        setCurrentFile,
+        setSources,
+        setTests,
+        setToml
     } = useProjectManager();
 
     const {
@@ -31,13 +34,18 @@ export default function MoveEditorView() {
         editorRef
     } = useMonacoSetup();
 
-    // on editorRef change, set the value of the editor to the current file content
     useEffect(() => {
-        if (editorRef.current && currentFile.content) {
-            editorRef.current.setValue(currentFile.content);
+        if(currentFile.type === 'source') {
+            setSources({ ...sources, [currentFile.filename]: editorRef.current.getValue() });
         }
-    }, [editorRef, currentFile]);
-    
+        else if(currentFile.type === 'test') {
+            setTests({ ...tests, [currentFile.filename]: editorRef.current.getValue() });
+        }
+        else if(currentFile.type === 'toml') {
+            setToml(editorRef.current.getValue());
+        }
+    }, [editorRef, currentFile, setCurrentFile, sources, tests, toml, setSources, setTests, setToml]);
+
     return (
         <div style={{ display: 'flex', height: '100vh', width: '200vh' }}>
             <div id='main' style={{ flex: 1 }}>

@@ -38,13 +38,13 @@ export default function Router() {
                         {
                             path: ':parentCommand/:childCommand',
                             element: <CommandExecutionPage />
+                        },
+                        {
+                            path: 'dashboard',
+                            element: <SuiScanDashboardPage />
                         }
                     ]
                 },
-                {
-                    path: 'dashboard',
-                    element: <SuiScanDashboardPage />
-                }
             ])}
         />
     );

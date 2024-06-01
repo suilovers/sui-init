@@ -65,7 +65,10 @@ const useProjectManager = () => {
         handleOpen,
         changeChildren,
         saveProject,
-        setCurrentFile
+        setCurrentFile,
+        setSources,
+        setTests,
+        setToml
     };
 };
 
