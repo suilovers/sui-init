@@ -901,11 +901,11 @@ def get_network_details():
 @app.route("/move/create", methods=["POST"])
 def create_move():
     data = request.get_json()
-    command = ["move", "new", "--path", f"projects/{data["projectName"]}", data["projectName"]]
+    command = ["move", "new", "--path", f"projects/{data['projectName']}", data['projectName']]
     sui_command(command, isJson=False, name="output")
-    source_file_path = f"projects/{data["projectName"]}/sources/{data["projectName"]}.move"
-    test_file_path = f"projects/{data["projectName"]}/tests/{data["projectName"]}_tests.move"
-    toml_path = "projects/" + data["projectName"] + "/Move.toml"
+    source_file_path = f"projects/{data['projectName']}/sources/{data['projectName']}.move"
+    test_file_path = f"projects/{data['projectName']}/tests/{data['projectName']}_tests.move"
+    toml_path = "projects/" + data['projectName'] + "/Move.toml"
     with open(source_file_path, "r") as file:
         lines = file.readlines()
     lines = lines[2:-1]
@@ -916,8 +916,8 @@ def create_move():
     lines = lines[2:-1]
     with open(test_file_path, "w") as file:
         file.writelines(lines)
-    test_path = "projects/" + data["projectName"] + "/tests"
-    source_path = "projects/" + data["projectName"] + "/sources"
+    test_path = "projects/" + data['projectName'] + "/tests"
+    source_path = "projects/" + data['projectName'] + "/sources"
     tests = generic_command("ls " + test_path).decode("utf-8")
     toml_file = generic_command("cat " + toml_path).decode("utf-8")
     test_file_list = [test for test in tests.split("\n") if test]
@@ -951,14 +951,14 @@ def list_move_projects():
 @app.route("/move/delete", methods=["POST"])
 def delete_move():
     data = request.get_json()
-    command = ["rm", "-r", data["projectName"]]
+    command = ["rm", "-r", data['projectName']]
     generic_command(command)
     return "Delet1ed successfully"
 
 @app.route("/move/update", methods=["POST"])
 def update_move():
     data = request.get_json()
-    projectName = data["projectName"]
+    projectName = data['projectName']
     fileName = data["fileName"]
     fileContent = data["fileContent"]
     project_path = f"projects/{projectName}"
@@ -979,7 +979,7 @@ def update_move():
 @app.route("/move/open", methods=["POST"])
 def open_move():
     data = request.get_json()
-    project_name = data["projectName"]
+    project_name = data['projectName']
     project_path = f"projects/{project_name}"
     sources_path = f"{project_path}/sources"
     tests_path = f"{project_path}/tests"
@@ -1004,7 +1004,7 @@ def open_move():
 @app.route("/move/build", methods=["POST"])
 def build_move():
     data = request.get_json()
-    project_name = data["projectName"]
+    project_name = data['projectName']
     path = os.getcwd()
     command = ["move", "build", "--path", f"{path}/projects/{project_name}"]
     output = sui_command(command, isJson=False, name="output")
@@ -1014,7 +1014,7 @@ def build_move():
 @app.route("/move/test", methods=["POST"])
 def test_move():
     data = request.get_json()
-    project_name = data["projectName"]
+    project_name = data['projectName']
     path = os.getcwd()
     command = ["move", "test", "--path", f"{path}/projects/{project_name}"]
     output = sui_command_with_pipe(command, isJson=False)
@@ -1023,7 +1023,7 @@ def test_move():
 @app.route("/move/publish", methods=["POST"])
 def publish_move():
     data = request.get_json()
-    project_name = data["projectName"]
+    project_name = data['projectName']
     budget = data["budget"]
     path = os.getcwd()
     command = ["client", "publish", 
