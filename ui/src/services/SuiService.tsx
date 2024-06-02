@@ -116,9 +116,5 @@ export async function fetchCallWithArguments(
     }
 
     const response = await _axios.post(path, body);
-    if (response) {
-        return response.data;
-    }
-
-    return false;
+    return response.data;
 }

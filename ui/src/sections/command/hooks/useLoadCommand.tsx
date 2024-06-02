@@ -4,7 +4,7 @@ import { CallStatus } from '../../../config';
 import { fetchCommand } from '../../../services/SuiService';
 import { CommandDTO } from '../../../types/sui/response';
 
-export function useLoadCommand() {
+export function useLoadCommand(setResponse: (response: Object) => void) {
     const { childCommand, parentCommand } = useParams();
     const [command, setCommand] = useState<CommandDTO | null>(null);
     const [status, setStatus] = useState<CallStatus>(CallStatus.LOADING);
@@ -14,9 +14,9 @@ export function useLoadCommand() {
             try {
                 setStatus(CallStatus.LOADING);
                 const command = await fetchCommand(parentCommand as string, childCommand as string);
-                console.log(command);
                 setCommand(command);
                 setStatus(CallStatus.SUCCESS);
+                setResponse({});
             } catch (error) {
                 setStatus(CallStatus.ERROR);
             }
@@ -24,7 +24,7 @@ export function useLoadCommand() {
         if (childCommand && parentCommand) {
             loadCommand();
         }
-    }, [childCommand, parentCommand]);
+    }, [childCommand, parentCommand, setResponse]);
 
     return { status, command };
 }

@@ -1,12 +1,13 @@
-import { Alert, Button, FormControl, FormHelperText, Snackbar, TextField, Theme, Typography } from '@mui/material';
+import { Button, FormControl, FormHelperText, TextField, Theme, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { useState } from 'react';
+import { useShowSnackbar } from '../../hooks/useToggleSnackbar';
 import { fetchCallWithArguments } from '../../services/SuiService';
 import { CommandDTO } from '../../types/sui/response';
 
 interface CommandExecutionFormProps {
     command: CommandDTO | null;
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    setResponse: (response: Object) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -25,15 +26,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export default function CommandExecutionForm({ command, onSubmit }: CommandExecutionFormProps) {
-    const [snackbarOpen, setOpen] = useState(false);
-    const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpen(false);
-    };
+export default function CommandExecutionForm({ command, onSubmit, setResponse }: CommandExecutionFormProps) {
+    const { showMessage } = useShowSnackbar();
     const handleClick = async (event: any) => {
         const _path = command?.path;
         const _arguments: any = command?.arguments;
@@ -55,13 +49,13 @@ export default function CommandExecutionForm({ command, onSubmit }: CommandExecu
             }
         }
         if (argumentValues.length === 0) {
-            setOpen(true);
+            showMessage({ message: 'Please fill the required fields.', severity: 'error' });
         } else {
-            let isReturned = await fetchCallWithArguments(_path as string, argumentBodyNames, optionsBodyNames, argumentValues, optionValues);
-            if (!isReturned) {
-                setOpen(true);
+            let response = await fetchCallWithArguments(_path as string, argumentBodyNames, optionsBodyNames, argumentValues, optionValues);
+            if (!response) {
+                showMessage({ message: 'Failed to send the command. Please check the arguments and try again.', severity: 'error' });
             } else {
-                setOpen(false);
+                setResponse(response);
             }
         }
     };
@@ -69,12 +63,6 @@ export default function CommandExecutionForm({ command, onSubmit }: CommandExecu
     const classes = useStyles();
     return (
         <div className={classes.root}>
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="error" variant="filled" sx={{ width: '100%' }}>
-                    Failed to send the command. Please check the arguments and try again.
-                </Alert>
-            </Snackbar>
-
             <form onSubmit={onSubmit}>
                 <Typography variant="h6" component="div" className={classes.formGroupTitle}>
                     Arguments

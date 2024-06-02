@@ -30,7 +30,7 @@ export default function CustomAppBar() {
                     onClick={() => navigate(PATH_MAIN.dashboard.dashboard())}
                     endIcon={<WaterDropIcon />}
                 >
-                    Open Local SuiDashboard
+                    Open Sui Scan
                 </Button>
                 <Button
                     variant="contained"

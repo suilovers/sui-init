@@ -24,7 +24,9 @@ export default function CustomSwitchEnvDropdown() {
                 <InputLabel id="network-label">Networks</InputLabel>
                 <Select labelId="network-label" id="network" value={currentNetwork} label="Networks" onChange={handleChange}>
                     {networks.map(([key, network]) => (
-                        <MenuItem value={key}>{network.title}</MenuItem>
+                        <MenuItem key={key} value={key}>
+                            {network.title}
+                        </MenuItem>
                     ))}
                 </Select>
             </FormControl>

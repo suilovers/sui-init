@@ -1,5 +1,6 @@
 import { Card, CardContent, Theme, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { useState } from 'react';
 import { CallStatus } from '../../config';
 import CommandExecutionForm from './CommandExecutionForm';
 import CommandExecutionResult from './CommandExecutionResult';
@@ -9,18 +10,24 @@ import { useSubmitCall } from './hooks/useSubmitCall';
 
 const useStyles = makeStyles((theme: Theme) => ({
     cardRoot: {
-        margin: "2rem 0",
+        margin: '2rem 0',
         minWidth: 800
     }
 }));
 export default function CommandExecutionView() {
-    const { command, status } = useLoadCommand();
+    const [response, setResponse] = useState<Object>({});
+    const { command, status: commandInfoCallStatus } = useLoadCommand(setResponse);
     const classess = useStyles();
     const isRequiredForm = command?.arguments.length! > 0 || command?.optionalArguments.length! > 0;
-    const { status: directCallStatus, response: directResponse } = useDirectCall(!isRequiredForm, command?.path);
-    const { status: formCallStatus, onSubmit, response: formResponse } = useSubmitCall(command?.path as string);
-    if (formCallStatus === CallStatus.SUCCESS || directCallStatus === CallStatus.SUCCESS) {
-        return <CommandExecutionResult response={formResponse || directResponse} />;
+    useDirectCall(!isRequiredForm, command?.path, setResponse);
+    const { onSubmit } = useSubmitCall(command?.path as string, setResponse);
+
+    if (commandInfoCallStatus !== CallStatus.SUCCESS) {
+        return <Typography>Loading...</Typography>;
+    }
+
+    if (JSON.stringify(response) !== '{}') {
+        return <CommandExecutionResult response={response} />;
     }
 
     if (isRequiredForm) {
@@ -33,7 +40,7 @@ export default function CommandExecutionView() {
                     <Typography color="text.secondary" variant="subtitle1" component="div">
                         {command?.description}
                     </Typography>
-                    <CommandExecutionForm command={command} onSubmit={onSubmit} />
+                    <CommandExecutionForm command={command} onSubmit={onSubmit} setResponse={setResponse} />
                 </CardContent>
             </Card>
         );

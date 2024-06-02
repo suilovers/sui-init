@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { NetworkContextProvider } from './contexts/NetworkContext';
+import { SnackbarProvider } from './contexts/SnackBarContext';
 import { Router } from './routes';
 
 const darkTheme = createTheme({
@@ -14,12 +15,14 @@ const darkTheme = createTheme({
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <NetworkContextProvider>
-            <ThemeProvider theme={darkTheme}>
-                <CssBaseline />
-                <Router />
-            </ThemeProvider>
-        </NetworkContextProvider>
+        <SnackbarProvider>
+            <NetworkContextProvider>
+                <ThemeProvider theme={darkTheme}>
+                    <CssBaseline />
+                    <Router />
+                </ThemeProvider>
+            </NetworkContextProvider>
+        </SnackbarProvider>
     </React.StrictMode>
 );
 

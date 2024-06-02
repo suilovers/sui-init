@@ -1,7 +1,7 @@
 import { Card, CardContent, Theme } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import { JsonViewer } from '@textea/json-viewer';
-import { useExecutionResult } from './hooks/useExecutionResult';
+import { Graph } from 'jsoncrack-react';
+import { useCopyNode } from './hooks/useCopyNode';
 
 interface CommandExecutionResultProps {
     response: any;
@@ -16,11 +16,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 export default function CommandExecutionResult({ response }: CommandExecutionResultProps) {
     const classess = useStyles();
-    const { addressDataType, stringArrayDataType, objectArrayDataType } = useExecutionResult();
+    const { onNodeClick } = useCopyNode();
     return (
         <Card className={classess.cardRoot}>
             <CardContent>
-                <JsonViewer rootName={false} theme="dark" value={response} valueTypes={[addressDataType, stringArrayDataType, objectArrayDataType]} />
+                <Graph onNodeClick={onNodeClick} json={JSON.stringify(response)} />
             </CardContent>
         </Card>
     );

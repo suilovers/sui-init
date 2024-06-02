@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { CallStatus } from '../../../config';
 import { fetchCall } from '../../../services/SuiService';
 
-export function useDirectCall(isDirectCall: boolean, path: string | undefined) {
+export function useDirectCall(isDirectCall: boolean, path: string | undefined, setResponse: (response: Object) => void) {
     const [status, setStatus] = useState<CallStatus>(CallStatus.LOADING);
-    const [response, setResponse] = useState<any>(null);
 
     useEffect(() => {
         async function directCall() {
@@ -22,7 +21,7 @@ export function useDirectCall(isDirectCall: boolean, path: string | undefined) {
         } else {
             setStatus(CallStatus.LOADING);
         }
-    }, [isDirectCall, path]);
+    }, [isDirectCall, path, setResponse]);
 
-    return { status, response };
+    return { status };
 }
