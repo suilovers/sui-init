@@ -31,7 +31,12 @@ class Config:
 
         Loads variables from the .env file and sets up network locations for different network types.
         """
-        load_dotenv()  # load variables from .env file
+        env = os.getenv("ENV", "production")
+        env_file = f'.env.{env}'
+        if os.path.exists(env_file):
+            load_dotenv(env_file)
+        else:
+            raise FileNotFoundError(f"File {env_file} not found")
         self.network_locations = {
             NetworkType.Local: {
                 "rpc_endpoint": os.getenv("LOCAL_RPC_ENDPOINT"),

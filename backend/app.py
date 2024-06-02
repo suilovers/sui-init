@@ -1,9 +1,8 @@
 import json
-from os import listdir
 import os
-import subprocess
-from flask import Flask, request, jsonify
+import time
 import requests
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pydantic import ValidationError
 from network import NetworkInitializer
@@ -13,14 +12,12 @@ from dto import (
     KeytoolConvertDTO,
     ClientCallDTO,
     ClientPtbDTO,
-    ClientNewEnvDTO,
     ClientPaySuiDTO,
     ClientExecuteCombinedSignedTxDTO,
     ClientPayDTO,
     ClientExecuteSignedTxDTO,
     ClientDynamicFieldDTO,
     ClientPayAllSuiDTO,
-    ClientFaucetDTO,
     ClientNewAddressDTO,
     ClientMergeCoinDTO,
     ClientGasDTO,
@@ -48,7 +45,7 @@ from dto import (
     KeytoolUpdateAliasDTO,
     TypeDTO,
 )
-from utils import generic_command, sui_command, cat_command
+from utils import generic_command, sui_command, cat_command,sui_command_with_pipe
 
 config = Config()
 networkInitializer = NetworkInitializer(config.NETWORK_LOCATIONS)
@@ -198,8 +195,14 @@ def client_faucet():
     network = sui_command(["client", "active-env"])
     address = sui_command(["client", "active-address"])
     network = config.NETWORK_LOCATIONS[network][NetworkDetails.GasFaucetUrl]
-    print(requests.post(network+"/gas", json={"FixedAmountRequest": {"recipient": address}}).json())
-    return requests.post(network+"/gas", json={"FixedAmountRequest": {"recipient": address}}).json()
+    print(
+        requests.post(
+            network + "/gas", json={"FixedAmountRequest": {"recipient": address}}
+        ).json()
+    )
+    return requests.post(
+        network + "/gas", json={"FixedAmountRequest": {"recipient": address}}
+    ).json()
 
 
 @app.route("/client/gas", methods=["POST"])
@@ -876,10 +879,10 @@ def check_local_network():
         config.NETWORK_LOCATIONS[NetworkType.Local][NetworkDetails.RpcEndpoint],
     ]
     try:
-        response = sui_command(command, False), 200
+        response = sui_command(command, False, "output"), 200
+        if "error" in response["output"]:
+            return {"error": "Local network not found"}, 400
     except Exception as e:
-        print("--------------------")
-        print(e)
         return {"error": "Local network not found"}, 400
     return response
 
@@ -898,79 +901,104 @@ def get_network_details():
 @app.route("/move/create", methods=["POST"])
 def create_move():
     data = request.get_json()
-    command = ["move", "new", data["projectName"]]
-    sui_command(command, isJson=False, name="output") 
+    command = ["move", "new", "--path", f"projects/{data["projectName"]}", data["projectName"]]
+    sui_command(command, isJson=False, name="output")
+    source_file_path = f"projects/{data["projectName"]}/sources/{data["projectName"]}.move"
+    test_file_path = f"projects/{data["projectName"]}/tests/{data["projectName"]}_tests.move"
+    toml_path = "projects/" + data["projectName"] + "/Move.toml"
+    with open(source_file_path, "r") as file:
+        lines = file.readlines()
+    lines = lines[2:-1]
+    with open(source_file_path, "w") as file:
+        file.writelines(lines)
+    with open(test_file_path, "r") as file:
+        lines = file.readlines()
+    lines = lines[2:-1]
+    with open(test_file_path, "w") as file:
+        file.writelines(lines)
+    test_path = "projects/" + data["projectName"] + "/tests"
+    source_path = "projects/" + data["projectName"] + "/sources"
+    tests = generic_command("ls " + test_path).decode("utf-8")
+    toml_file = generic_command("cat " + toml_path).decode("utf-8")
+    test_file_list = [test for test in tests.split("\n") if test]
+    source_files = generic_command("ls " + source_path).decode("utf-8")
+    source_file_list = [source for source in source_files.split("\n") if source]
+    test_dict = {
+        test_file_name: generic_command(f"cat {test_path}/{test_file_name}").decode("utf-8")
+        for test_file_name in test_file_list
+    }
+    source_dict = {
+        source_file_name: generic_command(f"cat {source_path}/{source_file_name}").decode("utf-8")
+        for source_file_name in source_file_list
+    }
+    return {"tests": test_dict, "sources": source_dict, "toml": toml_file}
 
-    with open(data["projectName"] + "/sources/"+data["projectName"]+".move", "r") as file:
-        lines = file.readlines()
-    lines = lines[2:-1]
-    with open(data["projectName"] + "/sources/"+data["projectName"]+".move", "w") as file:
-        file.writelines(lines)
-    with open(data["projectName"] + "/tests/"+data["projectName"]+"_tests.move", "r") as file:
-        lines = file.readlines()
-    lines = lines[2:-1]
-    with open(data["projectName"] + "/tests/"+data["projectName"]+"_tests.move", "w") as file:
-        file.writelines(lines)
-    sources = generic_command('ls '+data["projectName"]+'/sources').decode("utf-8")
-    tests = generic_command('ls '+data["projectName"]+'/tests').decode("utf-8")
-    toml_file = generic_command('cat '+data["projectName"]+'/Move.toml').decode("utf-8")
-    test_list = [test for test in tests.split('\n') if test]
-    source_list = [source for source in sources.split('\n') if source]
-    test_dict = {test: generic_command('cat ' + data["projectName"] + '/tests/' + test).decode("utf-8") for test in test_list}
-    source_dict = {source: generic_command('cat ' + data["projectName"] + '/sources/' + source).decode("utf-8") for source in source_list}
-    return { "tests": test_dict, "sources": source_dict, "toml": toml_file}
+
+@app.route("/move/list", methods=["POST"])
+def list_move_projects():
+    if not os.path.exists("projects"):
+        return {"projects": []}
+    projects_dir = "projects"
+    projects = os.listdir(projects_dir)
+    projects_info = []
+    for project in projects:
+        project_path = os.path.join(projects_dir, project)
+        modification_time = os.path.getmtime(project_path)
+        readable_time = time.ctime(modification_time)
+        projects_info.append({"name": project, "last_updated": readable_time})
+    return {"projects": projects_info}
 
 @app.route("/move/delete", methods=["POST"])
 def delete_move():
     data = request.get_json()
     command = ["rm", "-r", data["projectName"]]
-    output = generic_command(command)
-    return "Deleted successfully"
+    generic_command(command)
+    return "Delet1ed successfully"
 
-
-@app.route("/move/save", methods=["POST"])
-def save_move():
+@app.route("/move/update", methods=["POST"])
+def update_move():
     data = request.get_json()
-    project_name = data["projectName"]
-    tests = {key: value.replace("\r", "") for key, value in data["tests"].items()}
-    sources = {key: value.replace("\r", "") for key, value in data["sources"].items()}
-    toml = data["toml"].replace("\r", "")
-    # save toml file
-    toml_file = open(project_name + "/Move.toml", "w")
-    toml_file.write(toml)
-    toml_file.close()
-    for source in sources:
-        source_file = open(project_name + "/sources/" + source, "w")
-        source_file.write(sources[source])
-        source_file.close()
-    # save tests
-    for test in tests:
-        test_file = open(project_name + "/tests/" + test, "w")
-        test_file.write(tests[test])
-        test_file.close()
-    # delete files which is not in sources or tests
-    sources_files = listdir(project_name + "/sources")
-    tests_files = listdir(project_name + "/tests")
-    for file in sources_files:
-        if file not in sources:
-            os.remove(project_name + "/sources/" + file)
-    for file in tests_files:
-        if file not in tests:
-            os.remove(project_name + "/tests/" + file)
-    return "Saved successfully"
+    projectName = data["projectName"]
+    fileName = data["fileName"]
+    fileContent = data["fileContent"]
+    project_path = f"projects/{projectName}"
+    sources_path = f"{project_path}/sources"
+    tests_path = f"{project_path}/tests"
+    if not os.path.exists(project_path):
+        raise FileNotFoundError(f"Project {projectName} not found")
+
+    if "_tests" in fileName:
+        file_path = f"{tests_path}/{fileName}"
+    else:
+        file_path = f"{sources_path}/{fileName}"
+    with open(file_path, "w") as file:
+        file.write(fileContent)
+    return "Updated successfully", 200
+
 
 @app.route("/move/open", methods=["POST"])
 def open_move():
     data = request.get_json()
     project_name = data["projectName"]
-    sources = generic_command('ls '+project_name+'/sources').decode("utf-8")
-    tests = generic_command('ls '+project_name+'/tests').decode("utf-8")
-    toml_file = generic_command('cat '+project_name+'/Move.toml').decode("utf-8")
-    test_list = [test for test in tests.split('\n') if test]
-    source_list = [source for source in sources.split('\n') if source]
-    test_dict = {test: generic_command('cat ' + project_name + '/tests/' + test).decode("utf-8") for test in test_list}
-    source_dict = {source: generic_command('cat ' + project_name + '/sources/' + source).decode("utf-8") for source in source_list}
-    return { "tests": test_dict, "sources": source_dict, "toml": toml_file}
+    project_path = f"projects/{project_name}"
+    sources_path = f"{project_path}/sources"
+    tests_path = f"{project_path}/tests"
+    sources = generic_command(f"ls {sources_path}").decode("utf-8")
+    tests = generic_command(f"ls {tests_path}").decode("utf-8")
+    toml_file = generic_command(f"cat {project_path}/Move.toml").decode("utf-8")
+    test_list = [test for test in tests.split("\n") if test]
+    source_list = [source for source in sources.split("\n") if source]
+    test_dict = {
+        test: generic_command(f"cat {tests_path}/{test}").decode("utf-8")
+        for test in test_list
+    }
+    source_dict = {
+        source: generic_command(f"cat {sources_path}/{source}").decode(
+            "utf-8"
+        )
+        for source in source_list
+    }
+    return {"tests": test_dict, "sources": source_dict, "toml": toml_file}
 
 
 @app.route("/move/build", methods=["POST"])
@@ -978,9 +1006,9 @@ def build_move():
     data = request.get_json()
     project_name = data["projectName"]
     path = os.getcwd()
-    command = ["move", "build", "--path" , path + "/" + project_name]
+    command = ["move", "build", "--path", f"{path}/projects/{project_name}"]
     output = sui_command(command, isJson=False, name="output")
-    return {"output": output}
+    return output
 
 
 @app.route("/move/test", methods=["POST"])
@@ -988,12 +1016,9 @@ def test_move():
     data = request.get_json()
     project_name = data["projectName"]
     path = os.getcwd()
-    command = ["move", "test", "--path" , path + "/" + project_name]
-    output = sui_command(command, isJson=False, name="output")
-    return {"output": output}
-cors = CORS(app, resource={r"/*": {"origins": "*"}})
-app.config["CORS_HEADERS"] = "Content-Type"
-networkInitializer.init_networks()
+    command = ["move", "test", "--path", f"{path}/projects/{project_name}"]
+    output = sui_command_with_pipe(command, isJson=False)
+    return jsonify(output)
 
 @app.route("/move/publish", methods=["POST"])
 def publish_move():
@@ -1001,9 +1026,18 @@ def publish_move():
     project_name = data["projectName"]
     budget = data["budget"]
     path = os.getcwd()
-    command = ["client", "publish","--gas-budget",budget , path + "/" + project_name]
-    output = sui_command(command, isJson=False, name="output")
-    return {"output": output}
+    command = ["client", "publish", 
+               f"{path}/projects/{project_name}",
+               "--gas-budget",     
+               budget, 
+               "--skip-dependency-verification"]
+    output = sui_command_with_pipe(command, isJson=True)
+    return jsonify(output)
+
+cors = CORS(app, resource={r"/*": {"origins": "*"}})
+app.config["CORS_HEADERS"] = "Content-Type"
+networkInitializer.init_networks()
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=7777)
