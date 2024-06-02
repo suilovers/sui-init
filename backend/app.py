@@ -879,10 +879,12 @@ def check_local_network():
         config.NETWORK_LOCATIONS[NetworkType.Local][NetworkDetails.RpcEndpoint],
     ]
     try:
-        response = sui_command(command, False, "output"), 200
+        response = sui_command(command, False, "output")
+        print(response)
         if "error" in response["output"]:
             return {"error": "Local network not found"}, 400
     except Exception as e:
+        print(e)
         return {"error": "Local network not found"}, 400
     return response
 

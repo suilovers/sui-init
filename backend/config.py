@@ -32,7 +32,9 @@ class Config:
         Loads variables from the .env file and sets up network locations for different network types.
         """
         env = os.getenv("ENV", "production")
+        
         env_file = f'.env.{env}'
+        print(f"ENV: {env_file}")
         if os.path.exists(env_file):
             load_dotenv(env_file)
         else:
