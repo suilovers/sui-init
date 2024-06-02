@@ -3,7 +3,7 @@ from os import listdir
 import os
 import subprocess
 from flask import Flask, request, jsonify
-
+import requests
 from flask_cors import CORS
 from pydantic import ValidationError
 from network import NetworkInitializer
@@ -82,12 +82,6 @@ def client_addresses():
 
 
 @app.route("/client/balance", methods=["POST"])
-def current_balance():
-    response = sui_command(["client", "balance"])
-    return jsonify(response)
-
-
-@app.route("/client/balance", methods=["POST"])
 def client_balance():
     data = ClientBalanceDTO(**request.json)
     command = ["client", "balance", data.address]
@@ -95,7 +89,6 @@ def client_balance():
         command.extend(["--coin-type", data.coin_type])
     if data.with_coins:
         command.append("--with-coins")
-    print(command)
     response = sui_command(command)
     return jsonify(response)
 
@@ -202,18 +195,11 @@ def client_execute_combined_signed_tx():
 
 @app.route("/client/faucet", methods=["POST"])
 def client_faucet():
-    try:
-        data = ClientFaucetDTO(**request.args)
-        command = ["client", "faucet"]
-        if data.address:
-            command.extend(["--address", data.address])
-        if data.url:
-            command.extend(["--url", data.url])
-        response = sui_command(command)
-        print(response)
-        return jsonify(response)
-    except ValidationError as e:
-        return {"error": str(e)}, 400
+    network = sui_command(["client", "active-env"])
+    address = sui_command(["client", "active-address"])
+    network = config.NETWORK_LOCATIONS[network][NetworkDetails.GasFaucetUrl]
+    print(requests.post(network+"/gas", json={"FixedAmountRequest": {"recipient": address}}).json())
+    return requests.post(network+"/gas", json={"FixedAmountRequest": {"recipient": address}}).json()
 
 
 @app.route("/client/gas", methods=["POST"])
@@ -890,10 +876,10 @@ def check_local_network():
         config.NETWORK_LOCATIONS[NetworkType.Local][NetworkDetails.RpcEndpoint],
     ]
     try:
-        response = sui_command(command), 200
-    except:
+        response = sui_command(command, False), 200
+    except Exception as e:
         print("--------------------")
-        print(command)
+        print(e)
         return {"error": "Local network not found"}, 400
     return response
 
@@ -913,28 +899,18 @@ def get_network_details():
 def create_move():
     data = request.get_json()
     command = ["move", "new", data["projectName"]]
-    output = sui_command(command, isJson=False, name="output")
-    sources = ["main.move"]
-    tests = ["main.move"]
-    for source in sources:
-        source_file = open(data["projectName"] + "/sources/" + source, "w")
-        source_file.write("""module 0x1::MyModule {
-    public fun hello_world() {
-        debug::print("Hello, Move!");
-    }
-}
-""")
-        source_file.close()
-    for test in tests:
-        test_file = open(data["projectName"] + "/tests/" + test, "w")
-        test_file.write("""script {
-    use 0x1::MyModule;
+    sui_command(command, isJson=False, name="output") 
 
-    fun test_hello_world() {
-        MyModule::hello_world();
-    }
-}""")
-        test_file.close()        
+    with open(data["projectName"] + "/sources/"+data["projectName"]+".move", "r") as file:
+        lines = file.readlines()
+    lines = lines[2:-1]
+    with open(data["projectName"] + "/sources/"+data["projectName"]+".move", "w") as file:
+        file.writelines(lines)
+    with open(data["projectName"] + "/tests/"+data["projectName"]+"_tests.move", "r") as file:
+        lines = file.readlines()
+    lines = lines[2:-1]
+    with open(data["projectName"] + "/tests/"+data["projectName"]+"_tests.move", "w") as file:
+        file.writelines(lines)
     sources = generic_command('ls '+data["projectName"]+'/sources').decode("utf-8")
     tests = generic_command('ls '+data["projectName"]+'/tests').decode("utf-8")
     toml_file = generic_command('cat '+data["projectName"]+'/Move.toml').decode("utf-8")

@@ -37,7 +37,7 @@ class NetworkInitializer:
                 network[NetworkDetails.RpcEndpoint],
             ]
             try:
-                sui_command(command)
+                sui_command(command, False)
             except Exception as e:
                 print(f"Error initializing {networkAlias} network: {e}")
                 continue

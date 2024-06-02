@@ -19,8 +19,7 @@ export default function SuiScanDashboardPage() {
                     title="SUI Scan Dashboard"
                     style={{
                         position: 'absolute',
-                        top: '-400px', // move up by 240px
-                        height: 'calc(100% + 400px)' // add 240px to the height to compensate for the upward shift
+                        height: 'calc(100%)' // add 240px to the height to compensate for the upward shift
                     }}
                     src={SuiScanUrlMap[currentNetwork]}
                 />

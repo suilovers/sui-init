@@ -236,24 +236,7 @@
             "description": "Faucets the client",
             "path": "/client/faucet",
             "arguments": [],
-            "optionalArguments": [
-                {
-                    "title": "Address",
-                    "name": "address",
-                    "type": "string",
-                    "options": [],
-                    "description": "The address",
-                    "default": "default"
-                },
-                {
-                    "title": "URL",
-                    "name": "url",
-                    "type": "string",
-                    "options": [],
-                    "description": "The URL",
-                    "default": "default"
-                }
-            ]
+            "optionalArguments": []
         },
         "/gas": {
             "name": "Gas",
