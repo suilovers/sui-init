@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     sudo \
     dos2unix \
     python3 \
+    git \
     python3-venv \
     curl \
     python3-pip \
@@ -19,6 +20,7 @@ RUN sudo chmod +x /usr/local/bin/*
 RUN rm -rf *
 ENV PATH="/usr/local/bin:${PATH}"
 
+RUN git clone https://github.com/MystenLabs/sui.git /app/sui-repo
 COPY ./backend/requirements.txt /app
 
 # Install backend dependencies
