@@ -21,6 +21,10 @@ RUN rm -rf *
 ENV PATH="/usr/local/bin:${PATH}"
 
 RUN git clone https://github.com/MystenLabs/sui.git /app/sui-repo
+WORKDIR /app/sui-repo
+RUN git checkout framework/testnet
+
+WORKDIR /app
 COPY ./backend/requirements.txt /app
 
 # Install backend dependencies
