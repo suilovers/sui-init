@@ -45,6 +45,7 @@ from dto import (
     KeytoolUpdateAliasDTO,
     TypeDTO,
 )
+import shutil
 from utils import generic_command, sui_command, cat_command,sui_command_with_pipe
 
 config = Config()
@@ -953,9 +954,12 @@ def list_move_projects():
 @app.route("/move/delete", methods=["POST"])
 def delete_move():
     data = request.get_json()
-    command = ["rm", "-r", data['projectName']]
-    generic_command(command)
-    return "Delet1ed successfully"
+    print(data)
+    projectDir = f"projects/{data['projectName']}"
+    if not os.path.exists(projectDir):
+        return "Project not found", 404
+    shutil.rmtree(projectDir)
+    return "Deleted successfully", 200
 
 @app.route("/move/update", methods=["POST"])
 def update_move():

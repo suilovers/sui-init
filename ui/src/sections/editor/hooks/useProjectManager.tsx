@@ -188,10 +188,12 @@ const useProjectManager = () => {
 
     const deleteProject = () => {
         fetchCallWithBody('/move/delete', { projectName });
+        setProjectName(null);
         setSources({});
         setTests({});
         setToml('');
         setCurrentFile({ fileName: '', type: '', content: '' });
+        document.location.reload();
     };
 
     async function publishProject() {
