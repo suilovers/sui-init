@@ -1,9 +1,6 @@
 version: '3'
 services:
   network:
-    # networks:
-    #   sui-network:
-    #     ipv4_address: 10.0.0.11
     image: abodur/sui-network:9899dcc7f14f15b1a2f48b0a69256a4aabf16b60
     platform: linux/amd64
     container_name: network
@@ -21,9 +18,6 @@ services:
     depends_on:
       - network
   api:
-    # networks:
-    #   sui-network:
-    #     ipv4_address: 10.0.0.12
     image: abodur/sui-api:9899dcc7f14f15b1a2f48b0a69256a4aabf16b60
     platform: linux/amd64
     container_name: api
@@ -31,11 +25,4 @@ services:
     ports:
       - 7777:7777
     depends_on:
-      - network
-# networks:
-#   sui-network:
-#     driver: bridge
-#     ipam:
-#       config:
-#       - subnet: 10.0.0.0/24
-   
+      - network   
